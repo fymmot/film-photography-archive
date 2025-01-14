@@ -1,0 +1,263 @@
+---
+interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  images?: any[];
+  roll_id: number;
+  roll_year: number;
+  roll_month: number;
+  camera?: string;
+  lenses?: string[];
+  film?: string;
+  film_speed?: number;
+  developer?: string;
+  start_date?: Date;
+  end_date?: Date;
+  location?: string | string[];
+  comments?: string;
+  slug: string;
+  showButtons?: boolean;
+  tags?: string[] | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  visitorComments?: any;
+}
+const {
+  images,
+  roll_id,
+  roll_year,
+  roll_month,
+  camera,
+  lenses,
+  film,
+  film_speed,
+  developer,
+  start_date,
+  end_date,
+  location,
+  comments,
+  slug,
+  visitorComments,
+  tags,
+  showButtons = true,
+} = Astro.props as Props;
+import { loadExifData } from "../lib/image-utils";
+import CommentDialog from "./CommentDialog.astro";
+import LoggedInOnly from "./LoggedInOnly.astro";
+import TagDialog from "./TagDialog.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+
+let developer_notes: string = "";
+let allLenses: string[] = [];
+if (images) {
+  await Promise.all(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    images.map(async (image: any, index: number) => {
+      if (!image.image.src) {
+        return;
+      }
+      const exifData = await loadExifData(image.image.src);
+      if (index === 0) {
+        const devNotesRegex = /.*\d+(min)? @ \d+C.*/g;
+        const matches =
+          exifData?.ImageDescription?.description.match(devNotesRegex);
+        developer_notes =
+          matches && matches.length > 0 ? matches[0].trim() : "";
+      }
+      // Only add EXIF lenses if no markdown lenses are provided
+      if (!lenses || lenses.length === 0) {
+        allLenses.push(exifData?.LensModel?.description || "");
+        allLenses = allLenses.filter(
+          (lens, index, self) => lens && self.indexOf(lens) === index
+        );
+      }
+    })
+  );
+}
+
+if (lenses && lenses.length > 0) {
+  allLenses = [...lenses];
+}
+---
+
+<section class="mb-8 grow-0 px-4 lg:w-[300px]" transition:animate="fade">
+  <div class="min-w-[300px] max-w-sm lg:sticky lg:top-[130px]">
+    <dl
+      class="mt-6 flex flex-col gap-1"
+      id="roll-metadata-details"
+      tabindex="-1"
+    >
+      <dt class="mt-2 text-sm">{t("component.filmRollInfo.rollId")}</dt>
+      <dd class="text-base">
+        Roll #{roll_id}
+        {
+          new Date(roll_year, roll_month, 0).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          })
+        }
+      </dd>
+      {
+        camera && (
+          <>
+            <dt class="mt-2 text-sm">{t("component.filmRollInfo.camera")}</dt>
+            <dd class="text-base">
+              <a
+                href={`/rolls?cameras=${encodeURIComponent(camera)}`}
+                class="underline-offset-2 hover:underline"
+              >
+                {camera}
+              </a>
+            </dd>
+          </>
+        )
+      }
+      {
+        allLenses && allLenses.length > 0 && (
+          <>
+            <dt class="mt-2 text-sm">
+              {allLenses.length > 1
+                ? t("component.filmRollInfo.lenses")
+                : t("component.filmRollInfo.lens")}
+            </dt>
+            <dd class="text-base">
+              {allLenses.length > 1
+                ? allLenses.map((lens) => (
+                    <>
+                      {lens}
+                      <br />
+                    </>
+                  ))
+                : allLenses}
+            </dd>
+          </>
+        )
+      }
+      {
+        film_speed && film && film.length > 0 && (
+          <>
+            <dt class="mt-2 text-sm">{t("component.filmRollInfo.film")}</dt>
+            <dd class="text-base">
+              <a
+                href={`/rolls?films=${encodeURIComponent(film)}`}
+                class="underline-offset-2 hover:underline"
+              >{`${film} @ ISO ${film_speed}`}</a>
+            </dd>
+          </>
+        )
+      }
+      {
+        (developer_notes.length > 0 || (developer && developer.length > 0)) && (
+          <>
+            <dt class="mt-2 text-sm">
+              {t("component.filmRollInfo.developer")}
+            </dt>
+            <dd class="text-base">
+              {developer_notes.length > 0 ? developer_notes : developer}
+            </dd>
+          </>
+        )
+      }
+      {
+        start_date && (
+          <>
+            <dt class="mt-2 text-sm">{t("component.filmRollInfo.shotDate")}</dt>
+            <dd class="text-base">
+              {new Date(start_date).toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              })}
+              {end_date &&
+              new Date(start_date).getMonth() !== new Date(end_date).getMonth()
+                ? ` - ${new Date(end_date).toLocaleString("default", { month: "long", year: "numeric" })}`
+                : ""}
+            </dd>
+          </>
+        )
+      }
+      {
+        location && (
+          <>
+            <dt class="mt-2 text-sm">{t("component.filmRollInfo.location")}</dt>
+            <dd class="text-base">
+              {Array.isArray(location) ? (
+                location.map((loc) => (
+                  <>
+                    <a
+                      href={`/rolls?locations=${encodeURIComponent(loc)}`}
+                      class="underline-offset-2 hover:underline"
+                    >
+                      {loc}
+                    </a>
+                    <br />
+                  </>
+                ))
+              ) : (
+                <a
+                  href={`/rolls?locations=${encodeURIComponent(location)}`}
+                  class="underline-offset-2 hover:underline"
+                >
+                  {location}
+                </a>
+              )}
+            </dd>
+          </>
+        )
+      }
+      {
+        comments && (
+          <>
+            <dt class="mt-2 text-sm">{t("component.filmRollInfo.notes")}</dt>
+            <dd class="text-base">{comments}</dd>
+          </>
+        )
+      }
+    </dl>
+
+    {
+      showButtons && (
+        <div class="mt-8">
+          <button
+            id="open-comment-dialog"
+            class="w-full rounded-md bg-[#222] px-4 py-2 text-lg font-semibold text-white hover:underline hover:brightness-125 dark:bg-[#eee] dark:text-black"
+          >
+            {t("component.filmRollInfo.addComment")}
+          </button>
+          <CommentDialog
+            rollSlug={slug}
+            comments={visitorComments}
+            showComments={false}
+          />
+          <LoggedInOnly>
+            <button
+              id="tag-film-roll"
+              class="mt-4 w-full cursor-pointer flex-row items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-lg font-semibold hover:underline hover:brightness-[0.98] dark:border-gray-700 dark:bg-black dark:hover:brightness-110"
+            >
+              {t("component.filmRollInfo.tagRoll")}
+            </button>
+            <TagDialog rollSlug={slug} existingTags={tags} />
+          </LoggedInOnly>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import { currentUser, isLoggedIn } from "../lib/auth";
+
+  const addToCollectionButton = document.getElementById(
+    "admin-add-to-collection"
+  );
+  if (addToCollectionButton) {
+    addToCollectionButton.addEventListener("click", () => {
+      currentUser.subscribe((user) => {
+        if (isLoggedIn(user)) {
+          console.log("User is logged in");
+        } else {
+          console.log("User is not logged in");
+        }
+      });
+    });
+  }
+</script>

@@ -1,0 +1,94 @@
+---
+import { Icon } from "astro-icon/components";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+const { inverted = false, ...other } = Astro.props;
+---
+
+<div class="flex flex-row items-center gap-2">
+  <button
+    type="button"
+    id="grid-selector"
+    {...other}
+    class="flex items-center gap-2"
+  >
+    <div
+      class={`flex items-center justify-center rounded-full bg-neutral-100 p-2 dark:bg-neutral-900 ${inverted ? "bg-neutral-900 text-white dark:bg-neutral-900" : ""} ${other.class || ""}`}
+    >
+      <Icon size={24} name="mdi:grid-large" class="grid-large-icon hidden" />
+      <Icon size={24} class="grid-small-icon" name="mdi:grid" />
+    </div>
+    <span
+      id="grid-selector-label"
+      class={`${inverted ? "" : ""} sr-only text-sm sm:not-sr-only`}
+    >
+      <span class="grid-large-text hidden"
+        >{t("component.filtering.normalGrid")}</span
+      >
+      <span class="grid-small-text">{t("component.filtering.compactGrid")}</span
+      >
+    </span>
+  </button>
+</div>
+<noscript>
+  <style>
+    #grid-selector {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const gridButton = document.getElementById("grid-selector");
+    const updateGridState = (isLargeGrid) => {
+      const largeIcon = gridButton?.querySelector(".grid-large-icon");
+      const smallIcon = gridButton?.querySelector(".grid-small-icon");
+      const largeText = gridButton?.querySelector(".grid-large-text");
+      const smallText = gridButton?.querySelector(".grid-small-text");
+
+      if (isLargeGrid) {
+        document.documentElement.classList.remove("compact-grid");
+        largeIcon?.classList.remove("hidden");
+        smallIcon?.classList.add("hidden");
+        largeText?.classList.remove("hidden");
+        smallText?.classList.add("hidden");
+        gridButton?.setAttribute("aria-pressed", "true");
+        localStorage.grid = "normal";
+      } else {
+        document.documentElement.classList.add("compact-grid");
+        largeIcon?.classList.add("hidden");
+        smallIcon?.classList.remove("hidden");
+        largeText?.classList.add("hidden");
+        smallText?.classList.remove("hidden");
+        gridButton?.setAttribute("aria-pressed", "false");
+        localStorage.grid = "compact";
+      }
+
+      // Notify other components about the change
+      document.dispatchEvent(
+        new CustomEvent("gridStateChange", {
+          detail: { isLargeGrid },
+        })
+      );
+    };
+
+    gridButton?.addEventListener("click", () => {
+      const isCurrentlyCompact =
+        document.documentElement.classList.contains("compact-grid");
+      updateGridState(isCurrentlyCompact);
+    });
+
+    // Set initial state based on class presence
+    const initialState =
+      !document.documentElement.classList.contains("compact-grid");
+    updateGridState(initialState);
+
+    // Listen for changes from the filter buttons
+    document.addEventListener("gridStateChange", (e) => {
+      if (e.target !== document) return; // Avoid infinite loop
+      updateGridState(e.detail.isLargeGrid);
+    });
+  });
+</script>

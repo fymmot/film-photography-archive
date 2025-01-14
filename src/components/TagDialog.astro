@@ -1,0 +1,227 @@
+---
+import globalConfig from "../../global.config.yml";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  rollSlug: string;
+  existingTags?: string[] | null;
+}
+
+const t = useTranslations();
+const { rollSlug, existingTags } = Astro.props as Props;
+const { custom_tags } = globalConfig;
+
+// Type for custom tags
+type CustomTag = string;
+---
+
+<dialog
+  id="tag-dialog"
+  class="w-full max-w-md rounded-lg p-6 backdrop:bg-black/80 backdrop:backdrop-blur-sm"
+  data-login-required={t("component.tagDialog.loginRequired")}
+  data-error={t("component.tagDialog.error")}
+  data-success={t("component.tagDialog.success")}
+>
+  <form id="tag-form" class="space-y-4" onsubmit="return false;">
+    <!-- Tag Form -->
+    <div id="form-content">
+      <h2 class="mb-4 text-xl font-semibold">
+        {t("component.tagDialog.title")}
+      </h2>
+      {
+        existingTags && (
+          <p class="mb-4 font-normal">
+            {t("component.tagDialog.existingTags", {
+              tags: existingTags.join(", "),
+            })}
+          </p>
+        )
+      }
+
+      <div class="mb-4">
+        <label for="tag" class="mb-2 block text-sm"
+          >{t("component.tagDialog.select")}</label
+        >
+        <select
+          name="tag"
+          id="tag"
+          class="w-full rounded border border-gray-300 p-2 dark:border-gray-600 dark:bg-gray-800"
+          required
+        >
+          <option value="">{t("component.tagDialog.selectPlaceholder")}</option>
+          {
+            custom_tags.map((tag: CustomTag) => (
+              <option value={tag}>{tag}</option>
+            ))
+          }
+        </select>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button
+          type="button"
+          id="cancel-tag"
+          class="rounded-md border px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          {t("component.tagDialog.cancel")}
+        </button>
+        <button
+          type="submit"
+          id="submit-tag"
+          class="rounded-md bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+        >
+          {t("component.tagDialog.submit")}
+        </button>
+      </div>
+    </div>
+
+    <!-- Feedback Message -->
+    <div id="feedback-content" class="hidden space-y-4">
+      <div id="feedback-message" class="text-center"></div>
+      <div class="flex justify-center gap-2">
+        <button
+          type="button"
+          id="try-again-button"
+          class="hidden rounded-md border px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          {t("component.tagDialog.tryAgain")}
+        </button>
+        <button
+          type="button"
+          id="dismiss-button"
+          class="hidden rounded-md bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+        >
+          {t("component.tagDialog.dismiss")}
+        </button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script define:vars={{ rollSlug }}>
+  const dialog = document.getElementById("tag-dialog");
+  const form = document.getElementById("tag-form");
+  const formContent = document.getElementById("form-content");
+  const feedbackContent = document.getElementById("feedback-content");
+  const feedbackMessage = document.getElementById("feedback-message");
+  const cancelButton = document.getElementById("cancel-tag");
+  const submitButton = document.getElementById("submit-tag");
+  const tryAgainButton = document.getElementById("try-again-button");
+  const dismissButton = document.getElementById("dismiss-button");
+  const tagButton = document.getElementById("tag-film-roll");
+
+  function showForm() {
+    if (formContent && feedbackContent) {
+      formContent.classList.remove("hidden");
+      feedbackContent.classList.add("hidden");
+      if (submitButton) submitButton.disabled = false;
+    }
+  }
+
+  function showFeedback(message, isError, prUrl = "") {
+    if (
+      formContent &&
+      feedbackContent &&
+      feedbackMessage &&
+      tryAgainButton &&
+      dismissButton
+    ) {
+      formContent.classList.add("hidden");
+      feedbackContent.classList.remove("hidden");
+
+      feedbackMessage.innerHTML = prUrl
+        ? `${message}<br><br><a href="${prUrl}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">View Pull Request →</a>`
+        : message;
+
+      if (isError) {
+        feedbackMessage.classList.add("text-red-600");
+        tryAgainButton.classList.remove("hidden");
+        dismissButton.classList.add("hidden");
+      } else {
+        feedbackMessage.classList.remove("text-red-600");
+        tryAgainButton.classList.add("hidden");
+        dismissButton.classList.remove("hidden");
+      }
+    }
+  }
+
+  if (tagButton && dialog) {
+    tagButton.addEventListener("click", () => {
+      showForm();
+      if (form) form.reset();
+      dialog.showModal();
+    });
+  }
+
+  if (cancelButton && dialog) {
+    cancelButton.addEventListener("click", () => {
+      dialog.close();
+    });
+  }
+
+  if (tryAgainButton) {
+    tryAgainButton.addEventListener("click", () => {
+      showForm();
+    });
+  }
+
+  if (dismissButton && dialog) {
+    dismissButton.addEventListener("click", () => {
+      dialog.close();
+    });
+  }
+
+  dialog?.addEventListener("click", (e) => {
+    if (e.target === dialog) {
+      dialog.close();
+    }
+  });
+
+  if (form && submitButton) {
+    submitButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (submitButton.disabled) return;
+      submitButton.disabled = true;
+
+      // Get the current user's token
+      const user = window.netlifyIdentity.currentUser();
+      if (!user) {
+        showFeedback(dialog?.dataset.loginRequired || "", true);
+        submitButton.disabled = false;
+        return;
+      }
+
+      const formData = new FormData(form);
+      const tag = formData.get("tag");
+
+      try {
+        const response = await fetch("/.netlify/functions/add-tag", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token.access_token}`,
+          },
+          body: JSON.stringify({
+            tag,
+            rollSlug,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || dialog?.dataset.error || "");
+        }
+
+        showFeedback(
+          dialog?.dataset.success || "",
+          false,
+          result.pullRequestUrl
+        );
+      } catch (error) {
+        showFeedback(error.message || dialog?.dataset.error || "", true);
+        submitButton.disabled = false;
+      }
+    });
+  }
+</script>

@@ -1,0 +1,10 @@
+{
+    "eslint.codeActionsOnSave.rules": null,
+    "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "astro",
+    "typescript",
+    "typescriptreact"
+  ],
+}

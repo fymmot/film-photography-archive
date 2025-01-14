@@ -1,0 +1,42 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  class?: string;
+}
+
+import IconButton from "./IconButton.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+const { id, title, class: className } = Astro.props satisfies Props;
+---
+
+<dialog
+  aria-labelledby={`${id}-dialog-title`}
+  id={id}
+  style="box-shadow: var(--paper-shadow)"
+  class:list={[
+    "sidesheet fixed inset-0 left-auto z-20 my-0 h-screen max-h-screen min-h-screen max-w-[360px] rounded-xl rounded-r-none p-4 pb-6",
+    className,
+  ]}
+>
+  <div class="mx-auto flex flex-col space-y-4 px-1">
+    <div class="flex items-center justify-between">
+      <div class="w-10"></div>
+      <h2
+        id={`${id}-dialog-title`}
+        class="flex-1 text-center text-lg font-bold"
+      >
+        {title}
+      </h2>
+      <IconButton
+        name="mdi:close"
+        label={t("component.sheet.close")}
+        id={`close-${id}`}
+        size={24}
+      />
+    </div>
+    <slot />
+  </div>
+</dialog>

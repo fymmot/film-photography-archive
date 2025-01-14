@@ -1,0 +1,71 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import type { Roll } from "../../types";
+import Photo from "../../components/Photo.astro";
+
+const allRolls = (await getCollection("rolls")) as unknown as Roll[];
+function getRandomPhotos(rolls: Roll[], count: number) {
+  const allImages = rolls.flatMap((roll) =>
+    roll.data.images?.map((image) => ({
+      ...image,
+      rollSlug: roll.slug,
+      rollTitle: `Roll #${roll.data.roll_id} ${new Date(
+        roll.data.roll_year,
+        roll.data.roll_month,
+        0
+      ).toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      })}`,
+    }))
+  );
+
+  const shuffledImages = allImages.sort(() => 0.5 - Math.random());
+  return shuffledImages.slice(0, count);
+}
+
+const randomPhotos = getRandomPhotos(allRolls, 10);
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle } = landingPage.data;
+---
+
+<Layout title={`Random photos – ${pageTitle}`} h1="Random photos">
+  <section class="mx-auto mb-24 mt-8 max-w-screen-2xl">
+    <p>A few random photos from the archive.</p>
+    <ul
+      id="lightGallery"
+      class="mt-8 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-1 xl:gap-x-8"
+    >
+      {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        randomPhotos.map((image: any, index: number) =>
+          image ? (
+            <li>
+              <Photo
+                priority={index < 2}
+                sizes="(max-width: 768px) 100vw, 80vw"
+                enableLightbox={true}
+                src={image.image}
+                alt={image.alt || ""}
+                class="lg-item"
+                shouldGetExifData
+              />
+              {image.rollSlug && image.rollTitle && (
+                <p class="mt-2 text-center text-sm opacity-70">
+                  From{" "}
+                  <a
+                    class="underline underline-offset-2"
+                    href={`/rolls/${image.rollSlug}`}
+                  >
+                    {image.rollTitle}
+                  </a>
+                </p>
+              )}
+            </li>
+          ) : null
+        )
+      }
+    </ul>
+  </section>
+</Layout>

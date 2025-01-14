@@ -1,0 +1,41 @@
+---
+import { Icon } from "astro-icon/components";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+const {
+  name,
+  size = 32,
+  label,
+  href,
+  onClick,
+  id,
+  className,
+  shouldShowBadge = false,
+  ...other
+} = Astro.props;
+const Component = href ? "a" : "button";
+---
+
+<Component
+  href={href}
+  onclick={onClick}
+  type={onClick ? "button" : undefined}
+  id={id}
+  class={`relative flex items-center justify-center rounded-full bg-neutral-50 p-2 hover:brightness-90 dark:bg-transparent dark:hover:brightness-125 ${className}`}
+  {...other}
+>
+  <Icon size={size} name={name} />
+  {label && <span class="sr-only">{label}</span>}
+  {
+    shouldShowBadge && (
+      <span
+        style={{ display: "none" }}
+        class="absolute bottom-0 left-0 flex size-3 items-center justify-center rounded-full bg-neutral-800 p-0.5 text-sm font-bold text-white dark:bg-neutral-100"
+        id={`active-filters-count`}
+      >
+        <span class="sr-only">{t("component.iconButton.filtersActive")}</span>
+      </span>
+    )
+  }
+</Component>

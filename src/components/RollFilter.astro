@@ -1,0 +1,50 @@
+---
+import { useTranslations } from "../i18n/utils";
+
+// Props for the filter component
+interface FilterProps {
+  id: string;
+  legendId: string;
+  title: string;
+  items: string[];
+  reverseSort?: boolean;
+}
+
+const t = useTranslations();
+const {
+  id,
+  legendId,
+  title,
+  items,
+  reverseSort = false,
+} = Astro.props as FilterProps;
+---
+
+<fieldset
+  class="flex flex-col items-center gap-2"
+  id={id}
+  aria-labelledby={legendId}
+>
+  <div id={legendId} class="text-base font-bold">
+    <span class="sr-only">{t("component.rollFilter.filterBy")} </span>
+    {title}:
+  </div>
+  <ul class="inline-flex flex-wrap justify-center gap-3">
+    {
+      items
+        .sort(
+          reverseSort
+            ? (a, b) => b.localeCompare(a)
+            : (a, b) => a.localeCompare(b)
+        )
+        .map((item) => (
+          <li>
+            <label class="chip-button inline-block rounded-md border border-stone-300 px-2 py-1 text-center text-base opacity-90 dark:border-stone-600">
+              <input type="checkbox" class="sr-only" />
+              <span>{item}</span>
+            </label>
+          </li>
+        ))
+    }
+  </ul>
+</fieldset>

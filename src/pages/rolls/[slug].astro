@@ -1,0 +1,560 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, getEntry } from "astro:content";
+import { loadExifData, createCollage } from "../../lib/image-utils";
+import FilmRollInfo from "../../components/FilmRollInfo.astro";
+import SideSheet from "../../components/SideSheet.astro";
+import HighlightDialog from "../../components/HighlightDialog.astro";
+import type { Roll } from "../../types";
+import globalConfig from "../../../global.config.yml";
+import { AstroSeo } from "@astrolib/seo";
+import { getImage } from "astro:assets";
+import type { CollageImage } from "../../lib/image-utils";
+import { useTranslations } from "../../i18n/utils";
+
+const t = useTranslations();
+
+export async function getStaticPaths() {
+  const rolls = (await getCollection("rolls")) as unknown as Roll[];
+  return rolls.map((roll) => ({
+    params: { slug: roll.slug },
+  }));
+}
+export const prerender = true;
+
+const { slug } = Astro.params;
+let roll;
+let visitorComments;
+// const { enable_comments } = globalConfig;
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle } = landingPage.data;
+
+try {
+  roll = await getEntry("rolls", slug);
+} catch (error) {
+  console.error("Error fetching roll data for slug:", slug, error);
+  return Astro.redirect("/404");
+}
+
+/* try {
+  visitorComments = (
+    await getCollection("comments", (comment) => comment.id.startsWith(slug))
+  ).map((comment) => ({
+    data: comment.data,
+    body: comment.data.body || "",
+  }));
+} catch (error) {
+  console.error("Error fetching comments:", error);
+} */
+
+if (!roll) {
+  console.error("Failed to fetch roll data for slug:", slug);
+  return Astro.redirect("/404");
+}
+const {
+  roll_id,
+  roll_year,
+  roll_month,
+  title,
+  camera,
+  lenses,
+  film,
+  developer,
+  location,
+  start_date,
+  end_date = start_date,
+  images,
+  film_speed,
+  comments,
+  publish_date,
+  tags,
+} = roll.data; // This line assumes roll.data is defined
+
+const { name } = globalConfig;
+const getFilmFormatFromCamera = () => {
+  const { cameras35mm, camerasMediumFormat } = globalConfig;
+
+  if (cameras35mm.includes(camera)) {
+    return "35mm";
+  } else if (camerasMediumFormat.includes(camera)) {
+    return "120";
+  } else {
+    return undefined;
+  }
+};
+let developer_notes: string = "";
+let allLenses: string[] = [];
+if (images) {
+  await Promise.all(
+    images.map(async (image, index: number) => {
+      if (!image.image.src) {
+        return;
+      }
+      const exifData = await loadExifData(image.image.src);
+      if (index === 0) {
+        const devNotesRegex = /.*\d+(min)? @ \d+C.*/g;
+        const matches =
+          exifData?.ImageDescription?.description.match(devNotesRegex);
+        developer_notes =
+          matches && matches.length > 0 ? matches[0].trim() : "";
+      }
+      // Only add EXIF lenses if no markdown lenses are provided
+      if (!lenses || lenses.length === 0) {
+        allLenses.push(exifData?.LensModel?.description || "");
+        allLenses = allLenses.filter(
+          (lens, index, self) => lens && self.indexOf(lens) === index
+        );
+      }
+    })
+  );
+}
+
+if (lenses && lenses.length > 0) {
+  allLenses = [...lenses];
+}
+
+const dateString = `${new Date(start_date || "").toLocaleString("default", {
+  month: "long",
+  year: "numeric",
+})}
+${
+  end_date &&
+  new Date(start_date || "").getMonth() !== new Date(end_date || "").getMonth()
+    ? ` - ${new Date(end_date || "").toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      })}`
+    : ""
+}`;
+const seoDescription = t("roll.seoDescription", {
+  format: getFilmFormatFromCamera(),
+  photographer: name,
+  camera,
+  film,
+  speed: film_speed ? t("roll.filmSpeed", { speed: film_speed }) : "",
+  developer: developer_notes
+    ? t("roll.developer", { notes: developer_notes })
+    : "",
+  date: dateString,
+  location: Array.isArray(location) ? location.join(", ") : location,
+});
+const seoImages = await Promise.all(
+  images?.slice(0, 1).map(async (image) => {
+    const seoImage = await getImage({
+      src: image.image!,
+      width: 1200,
+      format: "webp",
+      alt: image.alt || "",
+    });
+    return {
+      url: `${Astro.url.origin}${seoImage?.src}`,
+      width: seoImage?.attributes.width,
+      height: seoImage?.attributes.height,
+      alt: seoImage?.attributes.alt,
+    };
+  }) || []
+);
+
+// Generate the collage for social sharing
+const collageImage = images
+  ? await createCollage(images as CollageImage[], slug, title, {
+      gridSize: 2,
+      gap: 4,
+      width: 1200,
+      height: 1200,
+    })
+  : null;
+const seoImageData = collageImage
+  ? { ...collageImage, url: `${Astro.url.origin}${collageImage.url}` }
+  : seoImages[0];
+
+const canonicalUrl = Astro.url.href;
+const publishDate =
+  publish_date || end_date
+    ? new Date(publish_date || end_date || "").toISOString()
+    : new Date().toISOString();
+---
+
+<AstroSeo
+  title={`Roll #${roll_id} ${new Date(roll_year, roll_month, 0).toLocaleString(
+    "default",
+    {
+      month: "long",
+      year: "numeric",
+    }
+  )} – ${title} – ${pageTitle}`}
+  description={seoDescription}
+  twitter={{
+    cardType: "summary_large_image",
+  }}
+  openGraph={{
+    type: "article",
+    images: [seoImageData],
+    title: `Roll #${roll_id} ${new Date(
+      roll_year,
+      roll_month,
+      0
+    ).toLocaleString("default", {
+      month: "long",
+      year: "numeric",
+    })} – ${title}`,
+    article: {
+      publishedTime: publishDate,
+      authors: [name],
+    },
+  }}
+  canonical={canonicalUrl}
+  additionalMetaTags={[
+    {
+      name: "twitter:label1",
+      content: t("roll.photoBy"),
+    },
+    {
+      name: "twitter:data1",
+      content: name,
+    },
+    {
+      name: "twitter:label2",
+      content: t("roll.equipment"),
+    },
+    {
+      name: "twitter:data2",
+      content: t("roll.equipmentDetail", { camera, film }),
+    },
+  ]}
+/>
+<Layout
+  h1={title}
+  showInfoButton
+  headingTransitionName="heading"
+  h1Subtitle={`${new Date(roll_year, roll_month, 0).toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  })}`}
+  title={`Roll #${roll_id} ${new Date(roll_year, roll_month, 0).toLocaleString(
+    "default",
+    {
+      month: "long",
+      year: "numeric",
+    }
+  )} – ${title} – ${pageTitle}`}
+>
+  <div class="mx-auto flex max-w-screen-xl flex-col gap-8 gap-y-4 lg:flex-row">
+    <section class="mb-0 mt-8 grow md:ml-4 lg:mb-16">
+      <h2 class="sr-only">{t("roll.photos")}</h2>
+      <ul
+        class="grid max-w-screen-xl grid-cols-1 gap-12 lg:grid-cols-1"
+        id="lightGallery"
+      >
+        {
+          images &&
+            images.map(async (image, index: number) => {
+              const optimizedImage = await getImage({
+                src: image.image,
+                widths: [240, 720, 2000],
+              });
+              return (
+                <li class="flex cursor-zoom-in flex-col gap-2">
+                  <a
+                    href={optimizedImage.src}
+                    class="trigger"
+                    data-pswp-srcset={optimizedImage.srcSet.attribute}
+                    data-pswp-width={optimizedImage.attributes.width}
+                    data-pswp-height={optimizedImage.attributes.height}
+                    aria-label={
+                      image.alt
+                        ? t("roll.openFullscreenWithAlt", { alt: image.alt })
+                        : t("roll.openFullscreen", { number: index + 1 })
+                    }
+                  >
+                    <img
+                      loading={index < 2 ? "eager" : "lazy"}
+                      fetchpriority={index < 2 ? "high" : "auto"}
+                      src={optimizedImage.src}
+                      srcset={optimizedImage.srcSet.attribute}
+                      width={optimizedImage.attributes.width}
+                      height={optimizedImage.attributes.height}
+                      alt={image.alt || ""}
+                      sizes="(min-width: 720px) 80vw, 100vw"
+                      class="lg-item"
+                    />
+                  </a>
+                  <HighlightDialog
+                    rollSlug={slug}
+                    imageIndex={index}
+                    existingHighlights={image.feature}
+                  />
+                </li>
+              );
+            })
+        }
+      </ul>
+    </section>
+    <FilmRollInfo
+      camera={camera}
+      images={images}
+      roll_id={roll_id}
+      roll_year={roll_year}
+      roll_month={roll_month}
+      location={location}
+      developer={developer}
+      lenses={lenses}
+      comments={comments}
+      start_date={start_date}
+      end_date={end_date}
+      film={film}
+      film_speed={film_speed}
+      slug={slug}
+      visitorComments={visitorComments}
+      tags={tags}
+    />
+    <SideSheet title={t("roll.info")} id="roll-info-sheet">
+      <FilmRollInfo
+        camera={camera}
+        images={images}
+        roll_id={roll_id}
+        roll_year={roll_year}
+        roll_month={roll_month}
+        lenses={lenses}
+        location={location}
+        developer={developer}
+        comments={comments}
+        start_date={start_date}
+        end_date={end_date}
+        film={film}
+        film_speed={film_speed}
+        slug={slug}
+        visitorComments={visitorComments}
+        showButtons={false}
+        tags={tags}
+      />
+    </SideSheet>
+  </div>
+  <!-- {
+    enable_comments === "on" &&
+      visitorComments &&
+      visitorComments?.length > 0 && (
+        <div class="container mx-auto my-12 max-w-screen-xl px-4">
+          <h2 class="mb-6 font-mono text-xl font-bold">{t("roll.comments")}</h2>
+          <div class="flex max-w-[60ch] flex-col gap-4">
+            {visitorComments.map((comment) => (
+              <div class="rounded-md border border-neutral-400 p-4">
+                <div class="mb-2 font-mono text-base font-semibold">
+                  {comment.data.author}
+                </div>
+                <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                  {new Date(comment.data.dateTime).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
+                <p class="whitespace-pre-wrap font-mono text-base">
+                  {comment.data.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+  } -->
+</Layout>
+
+<script>
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+  import "photoswipe/style.css";
+
+  interface FullscreenAPI {
+    request: (el: HTMLElement) => void;
+    exit: () => Promise<void>;
+    isFullscreen: () => Element | null;
+    change: string;
+    error: string;
+  }
+
+  function getFullscreenAPI(): FullscreenAPI | undefined {
+    let api: FullscreenAPI | undefined;
+    let enterFS: string | undefined;
+    let exitFS: string | undefined;
+    let elementFS: string | undefined;
+    let changeEvent: string | undefined;
+    let errorEvent: string | undefined;
+
+    if (document.documentElement.requestFullscreen !== undefined) {
+      enterFS = "requestFullscreen";
+      exitFS = "exitFullscreen";
+      elementFS = "fullscreenElement";
+      changeEvent = "fullscreenchange";
+      errorEvent = "fullscreenerror";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } else if ((document.documentElement as any).webkitRequestFullscreen) {
+      enterFS = "webkitRequestFullscreen";
+      exitFS = "webkitExitFullscreen";
+      elementFS = "webkitFullscreenElement";
+      changeEvent = "webkitfullscreenchange";
+      errorEvent = "webkitfullscreenerror";
+    }
+
+    if (enterFS && exitFS && elementFS && changeEvent && errorEvent) {
+      api = {
+        request: (el: HTMLElement) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (el as any)[enterFS]();
+        },
+        exit: () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (document as any)[exitFS]();
+        },
+        isFullscreen: () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (document as any)[elementFS];
+        },
+        change: changeEvent,
+        error: errorEvent,
+      };
+    }
+
+    return api;
+  }
+
+  function getContainer(): HTMLElement {
+    const pswpContainer = document.createElement("div");
+    pswpContainer.style.background = "#000";
+    pswpContainer.style.width = "100%";
+    pswpContainer.style.height = "100%";
+    pswpContainer.style.display = "none";
+    document.body.appendChild(pswpContainer);
+    return pswpContainer;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector("#lightGallery");
+    const fullscreenAPI = getFullscreenAPI();
+    const pswpContainer = getContainer();
+    const fullscreenEnabled =
+      document.documentElement.classList.contains("fullscreen-enabled");
+
+    if (container) {
+      interface LightboxOptions {
+        gallery: string;
+        children: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        pswpModule: () => Promise<any>;
+        bgOpacity: number;
+        appendToEl: HTMLElement;
+        showAnimationDuration?: number | undefined;
+        hideAnimationDuration?: number | undefined;
+        preloadFirstSlide: boolean | undefined;
+        openPromise?: () => Promise<void>;
+      }
+
+      const lightboxOptions: LightboxOptions = {
+        gallery: "#lightGallery",
+        children: "a.trigger",
+        pswpModule: () => import("photoswipe"),
+        bgOpacity: 0.92,
+        appendToEl:
+          fullscreenEnabled && fullscreenAPI ? pswpContainer : document.body,
+        preloadFirstSlide: fullscreenEnabled ? false : undefined,
+        ...(fullscreenEnabled
+          ? { showAnimationDuration: 0, hideAnimationDuration: 0 }
+          : {}),
+      };
+
+      if (fullscreenAPI && fullscreenEnabled) {
+        lightboxOptions.openPromise = () =>
+          new Promise((resolve) => {
+            if (fullscreenAPI.isFullscreen()) {
+              resolve();
+              return;
+            }
+
+            document.addEventListener(
+              fullscreenAPI.change,
+              () => {
+                pswpContainer.style.display = "block";
+                setTimeout(() => {
+                  resolve();
+                }, 300);
+              },
+              { once: true }
+            );
+
+            fullscreenAPI.request(pswpContainer);
+          });
+      }
+      const lightbox = new PhotoSwipeLightbox(lightboxOptions);
+
+      if (fullscreenAPI) {
+        document.addEventListener(fullscreenAPI.change, () => {
+          if (!fullscreenAPI.isFullscreen()) {
+            lightbox.pswp?.close();
+          }
+        });
+      }
+
+      // Add highlight button to PhotoSwipe UI
+      lightbox.on("uiRegister", function () {
+        const user = window.netlifyIdentity?.currentUser?.();
+        if (user) {
+          lightbox.pswp!.ui!.registerElement({
+            name: "highlight-button",
+            className: "pswp__button--highlight",
+            order: 9,
+            isButton: true,
+            html: "Add",
+            onClick: () => {
+              const currentIndex = lightbox.pswp!.currIndex;
+              const dialog = document.querySelector(
+                `dialog#highlight-dialog-${currentIndex}`
+              ) as HTMLDialogElement | null;
+              if (dialog) {
+                dialog.showModal();
+              }
+            },
+          });
+        }
+      });
+
+      // Remove logged-in-only check since we're now checking at registration time
+      lightbox.on("openingAnimationEnd", () => {
+        pswpContainer.style.display = "block";
+      });
+
+      lightbox.on("close", () => {
+        if (fullscreenAPI && fullscreenAPI.isFullscreen()) {
+          fullscreenAPI.exit();
+        }
+      });
+
+      lightbox.init();
+    }
+  });
+</script>
+
+<script>
+  import { setupDialog } from "../../lib/dialog-utils";
+  document.addEventListener("DOMContentLoaded", () => {
+    setupDialog("roll-info-sheet");
+    const infoButton = document.getElementById("info-button");
+    if (infoButton) {
+      infoButton.addEventListener("click", () => {
+        const sideSheet = document.getElementById("roll-info-sheet");
+        if (sideSheet) {
+          (sideSheet as HTMLDialogElement).showModal();
+          const closeButton = document.getElementById(
+            "close-roll-info-sheet-dialog"
+          );
+          closeButton?.addEventListener("click", () => {
+            (sideSheet as HTMLDialogElement).close();
+          });
+          sideSheet.addEventListener("click", (event) => {
+            if (event.target === sideSheet) {
+              (sideSheet as HTMLDialogElement).close();
+            }
+          });
+        }
+      });
+    }
+  });
+</script>

@@ -1,0 +1,63 @@
+---
+import { Icon } from "astro-icon/components";
+import { useTranslations } from "src/i18n/utils";
+const { inverted = false, ...other } = Astro.props;
+const t = useTranslations();
+---
+
+<div class="flex flex-row items-center gap-2">
+  <button
+    type="button"
+    id="theme-selector"
+    {...other}
+    class="flex items-center gap-2"
+  >
+    <div
+      class={`flex items-center justify-center rounded-full bg-neutral-100 p-2 dark:bg-neutral-900 ${inverted ? "bg-neutral-900 text-white dark:bg-neutral-900" : ""} ${other.class || ""}`}
+    >
+      <Icon
+        size={24}
+        name="no-flash"
+        class="hidden translate-y-1 dark:inline"
+      />
+      <Icon size={24} class="translate-y-1 dark:hidden" name="flash" />
+    </div>
+    <span
+      id="theme-selector-label"
+      class={`${inverted ? "" : ""} sr-only text-sm sm:not-sr-only`}
+      ><span class="hidden dark:block">{t("component.darkMode.noFlash")}</span
+      ><span class="block dark:hidden">{t("component.darkMode.flash")}</span
+      ></span
+    >
+  </button>
+</div>
+<noscript>
+  <style>
+    #theme-selector {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const themeButton = document.getElementById("theme-selector");
+    themeButton?.addEventListener("click", () => {
+      if (
+        localStorage.theme === "dark" ||
+        (!localStorage.theme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        localStorage.theme = "light";
+        document.documentElement.classList.remove("dark");
+        document.documentElement.style.colorScheme = "light";
+        themeButton.setAttribute("aria-pressed", "true");
+      } else {
+        localStorage.theme = "dark";
+        document.documentElement.classList.add("dark");
+        document.documentElement.style.colorScheme = "dark";
+        themeButton.setAttribute("aria-pressed", "false");
+      }
+    });
+  });
+</script>

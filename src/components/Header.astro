@@ -1,0 +1,103 @@
+---
+import IconButton from "./IconButton.astro";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  backTarget?: "rolls" | "start" | "features" | null;
+  h1?: string;
+  useBrowserBack?: boolean;
+  h1Subtitle?: string;
+  showSearch?: boolean;
+  showInfoButton?: boolean;
+  showCastButton?: boolean;
+}
+
+const t = useTranslations();
+
+const {
+  backTarget = null,
+  h1,
+  useBrowserBack = false,
+  h1Subtitle,
+  showSearch = false,
+  showInfoButton = false,
+  showCastButton = false,
+}: Props = Astro.props;
+
+const getBackTarget = () => {
+  if (backTarget === "features") return "/features";
+  if (backTarget === "rolls") return "/rolls";
+  return "/";
+};
+
+const getBackTargetLabel = () => {
+  if (backTarget === "features") return t("component.header.backToFeatures");
+  if (backTarget === "rolls") return t("component.header.backToRolls");
+  return t("component.header.backToStart");
+};
+---
+
+<header
+  class="sticky top-0 z-50 flex min-h-[76px] flex-row items-center justify-between bg-white/95 p-2 backdrop-blur-xl dark:bg-[rgba(18,18,18,0.94)] sm:px-4"
+>
+  {
+    backTarget !== null && (
+      <nav>
+        <IconButton
+          name="mdi:arrow-left"
+          href={useBrowserBack ? undefined : getBackTarget()}
+          label={getBackTargetLabel()}
+          id={useBrowserBack ? "browser-back" : undefined}
+        />
+      </nav>
+    )
+  }
+  {
+    h1 && (
+      <>
+        <h1 class="mt-1 text-center text-lg sm:text-xl">
+          {h1}
+          {h1Subtitle && (
+            <span class="block text-base opacity-55">{h1Subtitle}</span>
+          )}
+          <span class="block text-base opacity-55" id="visible-status" />
+        </h1>
+      </>
+    )
+  }
+  <div class="w-12">
+    {
+      showSearch && (
+        <IconButton
+          name="mdi:search"
+          label={t("component.header.search")}
+          id="search-button"
+          aria-expanded="false"
+          shouldShowBadge={true}
+        />
+      )
+    }
+    {showCastButton && <google-cast-launcher />}
+    {
+      showInfoButton && !showSearch && !showCastButton && (
+        <IconButton
+          name="mdi:info"
+          label={t("component.header.showRollInfo")}
+          className="lg:hidden"
+          id="info-button"
+        />
+      )
+    }
+  </div>
+</header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const button = document.getElementById("browser-back");
+    if (button) {
+      button.addEventListener("click", () => {
+        window.history.back();
+      });
+    }
+  });
+</script>

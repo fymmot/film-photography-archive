@@ -1,0 +1,218 @@
+html,
+body {
+  font-family: "Courier Prime", monospace;
+  /* Disable font synthesis which causes extrabold ugly fonts on Safari */
+  font-synthesis: none !important;
+}
+
+button:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+textarea:focus-visible,
+input[type="search"]:focus-visible,
+a[href]:focus-visible,
+a:focus-visible .roll-card-inner,
+.feature-card:has(a:focus-visible) {
+  @apply outline outline-4 outline-offset-2 outline-black dark:outline-white;
+  outline-style: auto;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="search"],
+textarea {
+  @apply border border-neutral-400 dark:border-neutral-500 w-full rounded-md px-3 py-2;
+}
+
+p {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+html.dark {
+  background-color: #000;
+}
+
+button:hover {
+  @apply brightness-90;
+}
+.dark button:hover {
+  @apply brightness-125;
+}
+
+/* Disable scroll when dialog is open */
+html:has(dialog[open]) {
+  @apply overflow-hidden;
+}
+dialog:focus-visible {
+  @apply outline-none;
+}
+
+/* Dialog animations */
+dialog.sidesheet[open] {
+  animation: slideinFromRight 225ms cubic-bezier(0, 0, 0.2, 1) forwards !important;
+}
+dialog.modal[open] {
+  animation: fadeIn 225ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@media (max-width: 640px) {
+  dialog.modal[open] {
+    animation: slideinFromBottom 225ms cubic-bezier(0, 0, 0.2, 1) forwards;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+  }
+}
+
+/* Dialog backdrop */
+dialog::backdrop {
+  @apply bg-black/30;
+  animation: backdrop-fade 225ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[open] {
+    animation: none !important;
+  }
+}
+
+@keyframes slideinFromRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes slideinFromBottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes backdrop-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+dt {
+  @apply opacity-70;
+}
+
+label:has(input:checked) {
+  @apply text-white dark:text-black bg-neutral-900 dark:bg-neutral-50;
+}
+label:has(input[type="checkbox"]:focus-visible) {
+  @apply outline outline-4 outline-black dark:outline-white;
+}
+.chip-button {
+}
+
+.lightbox {
+}
+
+.lg-item {
+}
+
+.lg-backdrop {
+  background-color: #fff !important;
+  /* background: var(--backdrop-image) !important;
+  background-size: cover !important;
+  filter: saturate(100%) brightness(90%); */
+}
+.dark .lg-backdrop {
+  background-color: #000 !important;
+  /* filter: saturate(175%) brightness(25%) !important; */
+}
+
+.lg-toolbar .lg-icon {
+  @apply !text-black dark:!text-white;
+}
+.lg-toolbar .lg-icon:hover {
+  @apply !brightness-125 dark:!brightness-90;
+}
+.lg-toolbar .lg-counter {
+  @apply !text-black/70 dark:!text-white/70;
+}
+
+.lg-show-in .lg-next,
+.lg-show-in .lg-prev {
+  @apply !text-black/70 dark:!text-white/70 !bg-neutral-200/50 dark:!bg-neutral-900/50;
+}
+
+.roll-card {
+}
+
+/* Drop shadows */
+html {
+  --paper-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
+    0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.trigger {
+}
+
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.photo-grid {
+  @apply grid gap-y-6 gap-x-6 xl:gap-x-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+html.compact-grid .photo-grid {
+  @apply grid grid-cols-2 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+}
+
+.grid-large-icon {
+}
+
+.grid-small-icon {
+}
+
+.grid-large-text {
+}
+
+.grid-small-text {
+}
+
+.grid-large-button {
+}
+
+.grid-small-button {
+}
+
+.copyright a {
+  @apply underline;
+}
+/* PhotoSwipe */
+.pswp__button--highlight {
+  background: none;
+  color: white;
+  padding: 0 15px;
+  font-size: 14px;
+  opacity: 0.8;
+  cursor: pointer;
+}
+.pswp__button--highlight:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

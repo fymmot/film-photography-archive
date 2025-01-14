@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "noEmit": true,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "skipLibCheck": true,
+  },
+  "exclude": ["node_modules", "dist", "bin", "public", "netlify", ".husky", "dev-dist"]
+}

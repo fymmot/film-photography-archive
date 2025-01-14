@@ -1,0 +1,41 @@
+---
+
+---
+
+<script>
+  import type { User } from "netlify-identity-widget";
+  import { currentUser, isLoggedIn, openLoginModal } from "../lib/auth";
+
+  // Get all admin-only elements
+  const adminElements = document.querySelectorAll("[data-logged-in-only]");
+
+  function setupElement(element: Element, shouldShow: boolean) {
+    if (shouldShow) {
+      element.classList.remove("hidden");
+      // Remove click handler if it exists
+      element.removeEventListener("click", handleLoginClick);
+    } else {
+      element.classList.add("hidden");
+      // Add click handler for login
+      element.addEventListener("click", handleLoginClick);
+    }
+  }
+
+  function handleLoginClick(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+    openLoginModal();
+  }
+
+  // Subscribe to user changes
+  currentUser.subscribe((user: User | null) => {
+    const shouldShow = isLoggedIn(user);
+    adminElements.forEach((element) => {
+      setupElement(element, shouldShow);
+    });
+  });
+</script>
+
+<div data-logged-in-only class="hidden">
+  <slot />
+</div>

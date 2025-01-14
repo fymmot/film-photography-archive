@@ -1,0 +1,11 @@
+---
+const { text, href } = Astro.props;
+const InnerComponent = href ? "a" : "span";
+---
+
+<li class="inline-block text-[0.75rem]">
+  <InnerComponent
+    class={`rounded-md border border-stone-200 px-1.5 py-1 text-center text-neutral-700 dark:border-stone-800 dark:text-neutral-300 ${href ? "hover:cursor-pointer hover:text-black hover:underline hover:underline-offset-2 hover:dark:text-white" : ""}`}
+    href={href}>{text}</InnerComponent
+  >
+</li>

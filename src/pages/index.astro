@@ -1,0 +1,250 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RollCard from "../components/RollCard.astro";
+import { getCollection, getEntry, type CollectionEntry } from "astro:content";
+import type { Roll } from "../types";
+import HighlightCard from "../components/HighlightCard.astro";
+import globalConfig from "../../global.config.yml";
+import { AstroSeo } from "@astrolib/seo";
+import { Icon } from "astro-icon/components";
+import { getImage } from "astro:assets";
+import { createCollage, type CollageImage } from "../lib/image-utils";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+
+const { latest_rolls_count } = globalConfig;
+
+const rolls = (await getCollection("rolls")) as unknown as Roll[];
+const sortedRolls = rolls
+  .sort((a, b) => {
+    const dateA = new Date(a.data.roll_year, a.data.roll_month, 0);
+    const dateB = new Date(b.data.roll_year, b.data.roll_month, 0);
+
+    const yearMonthA = dateA.getFullYear() * 100 + dateA.getMonth();
+    const yearMonthB = dateB.getFullYear() * 100 + dateB.getMonth();
+
+    if (yearMonthA === yearMonthB) {
+      return b.data.roll_id - a.data.roll_id; // Changed to sort roll_id in descending order
+    } else {
+      return yearMonthB - yearMonthA;
+    }
+  })
+  .slice(0, latest_rolls_count);
+
+const features = await getCollection("features");
+
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle, title, subtitle, seoDescription } = landingPage.data;
+
+/* Get all features with images */
+const featuresWithImages = features.filter(
+  (feature: CollectionEntry<"features">) => {
+    const hasOwnImages = feature.data.images && feature.data.images.length > 0;
+
+    const isInRollImages = rolls.some((roll) =>
+      roll.data.images?.some(
+        (image) =>
+          image &&
+          image.feature &&
+          image.feature?.toLowerCase() === feature.slug.toLowerCase()
+      )
+    );
+    return hasOwnImages || isInRollImages;
+  }
+);
+
+const allFeaturesWithImages = featuresWithImages.map(
+  (feature: CollectionEntry<"features">) => {
+    const featureImages = rolls
+      .map((roll) => roll.data.images || [])
+      .flat()
+      .filter(
+        (image) =>
+          image &&
+          image.feature &&
+          image.feature?.toLowerCase() === feature.slug.toLowerCase()
+      );
+
+    return {
+      ...feature,
+      heroImage: feature.data.heroImage || undefined,
+      images:
+        feature.data.images && feature.data.images.length > 0
+          ? feature.data.images
+          : featureImages,
+    };
+  }
+);
+
+const allRollSlugs = rolls.map((roll) => roll.slug);
+
+// Create a collage from the first image of the six latest rolls
+const latestRollImages = sortedRolls
+  .slice(0, 4)
+  .map((roll) => roll.data.images?.[0])
+  .filter((image): image is CollageImage => !!image);
+
+const collageImage = await createCollage(
+  latestRollImages,
+  "index",
+  "Latest Rolls",
+  {
+    gridSize: 2,
+    gap: 4,
+    width: 1200,
+    height: 1200,
+  }
+);
+
+const seoImage = collageImage
+  ? { ...collageImage, url: `${Astro.url.origin}${collageImage.url}` }
+  : sortedRolls.length > 0
+    ? await getImage({
+        src: sortedRolls[0].data.images?.[0].image,
+        width: 1200,
+      })
+    : null;
+---
+
+<AstroSeo
+  description={`${title} ${subtitle}`}
+  canonical={Astro.url.href}
+  openGraph={{
+    title: pageTitle,
+    description: seoDescription,
+    ...(seoImage
+      ? {
+          images: [
+            {
+              url:
+                "url" in seoImage
+                  ? seoImage.url
+                  : `${Astro.url.origin}${seoImage.src}`,
+              width:
+                "width" in seoImage
+                  ? seoImage.width
+                  : seoImage.attributes?.width || 1200,
+              height:
+                "height" in seoImage
+                  ? seoImage.height
+                  : seoImage.attributes?.height || 800,
+            },
+          ],
+        }
+      : undefined),
+  }}
+/>
+<Layout title={pageTitle}>
+  <div class="relative">
+    <section
+      class="mx-auto flex max-w-screen-sm flex-col items-center px-4 xs:flex-row xs:justify-center"
+    >
+      <Icon
+        name="hasselblad"
+        width={150}
+        height={150}
+        class="mb-[-32px] xs:ml-[-48px]"
+      />
+      <h1 class="text-lg font-semibold sm:text-xl xs:translate-x-[-16px]">
+        <span
+          class="inline-flex w-full justify-center border-b-4 border-black pb-1 dark:border-white xs:justify-start"
+          >{title}</span
+        >
+        <br />
+        <span class="mt-2 inline-flex text-base opacity-70">{subtitle}</span>
+      </h1>
+    </section>
+  </div>
+
+  <section class="mx-auto mb-24 mt-8 max-w-screen-2xl">
+    <h2 class="text-center text-lg sm:text-lg">
+      {t("start.rollsHeading")}
+    </h2>
+    <ul class="photo-grid">
+      {
+        sortedRolls.map((roll, index) => (
+          <RollCard
+            rollId={roll.data.roll_id}
+            rollYear={roll.data.roll_year}
+            rollMonth={roll.data.roll_month}
+            href={`/rolls/${roll.slug}`}
+            camera={roll.data.camera}
+            film={roll.data.film}
+            title={roll.data.title}
+            images={roll.data.images}
+            location={roll.data.location}
+            headingLevel="h3"
+            priority={index < 3}
+          />
+        ))
+      }
+    </ul>
+    <div
+      class="mx-4 mt-12 flex flex-col justify-center gap-4 sm:mx-auto sm:flex-row"
+    >
+      <a
+        href="/rolls"
+        class="block w-full cursor-pointer justify-center rounded-md bg-[#222] px-4 py-2 text-center text-lg font-semibold text-white underline-offset-2 hover:underline hover:brightness-125 dark:bg-[#eee] dark:text-black sm:w-fit"
+        >{
+          t("start.viewAllRolls", {
+            count: rolls.length > latest_rolls_count ? rolls.length : undefined,
+          })
+        }</a
+      >
+      {
+        rolls.length > 0 && (
+          <a
+            href="#"
+            id="shuffle-button"
+            data-roll-slugs={JSON.stringify(allRollSlugs)}
+            class="flex w-full cursor-pointer flex-row items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-center text-lg font-semibold underline-offset-2 hover:underline hover:brightness-[0.98] dark:border-gray-700 dark:bg-black dark:hover:brightness-110 sm:w-fit"
+          >
+            <Icon name="mdi:shuffle" width={24} height={24} />
+            <span>{t("start.randomRoll")}</span>
+          </a>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    allFeaturesWithImages.length > 0 ? (
+      <section class="mx-auto mb-24 mt-8 max-w-screen-2xl">
+        <h2 class="text-center text-lg sm:text-lg">
+          {t("start.highlightsTitle")}
+        </h2>
+        <ul class="mx-auto mt-8 grid max-w-screen-xl grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-1 xl:gap-x-8">
+          {allFeaturesWithImages
+            .slice(0, 2)
+            .map((feature: CollectionEntry<"features">) => (
+              <HighlightCard feature={feature} />
+            ))}
+        </ul>
+        {allFeaturesWithImages.length > 2 ? (
+          <a
+            href="/highlights"
+            class="mx-auto mt-12 block w-fit cursor-pointer rounded-md bg-[#222] px-4 py-2 text-center text-lg font-semibold text-white underline-offset-2 hover:underline hover:brightness-125 dark:bg-[#eee] dark:text-black"
+          >
+            {t("start.viewAllHighlights")}
+          </a>
+        ) : null}
+      </section>
+    ) : null
+  }
+</Layout>
+
+<script is:inline>
+  /* Shuffle roll links on page load */
+  document.addEventListener("DOMContentLoaded", () => {
+    const shuffleLink = document.getElementById("shuffle-button");
+    if (shuffleLink) {
+      const rollSlugs = JSON.parse(
+        shuffleLink?.getAttribute("data-roll-slugs") || "[]"
+      );
+      const randomRollSlugs = rollSlugs.sort(() => Math.random() - 0.5);
+      const firstRollSlug = randomRollSlugs[0];
+      shuffleLink.setAttribute("href", `/rolls/${firstRollSlug}`);
+    }
+  });
+</script>

@@ -1,0 +1,27 @@
+---
+import { Picture } from "astro:assets";
+const {
+  alt = "",
+  src,
+  className,
+  quality = "high",
+  enableLightbox = false,
+  priority = false,
+  imgStyle,
+  ...other
+} = Astro.props;
+const id = Math.random().toString(36).substring(2, 15);
+---
+
+<Picture
+  loading={priority ? "eager" : "lazy"}
+  quality={quality}
+  pictureAttributes={{ class: "photo" }}
+  id={id}
+  widths={[240, 720, 2000]}
+  class={`${className} ${enableLightbox ? "cursor-zoom-in" : ""}`}
+  alt={alt || ""}
+  src={src}
+  {...other}
+  style={imgStyle}
+/>

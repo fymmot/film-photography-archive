@@ -1,0 +1,708 @@
+---
+import IconButton from "./IconButton.astro";
+import { Icon } from "astro-icon/components";
+import RollFilter from "./RollFilter.astro";
+import SideSheet from "./SideSheet.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+
+const { cameras, filmTypes, formats, films, years, locations, tags } =
+  Astro.props;
+---
+
+<SideSheet id="filter-dialog" title={t("component.filtering.title")}>
+  <form id="filter-form" novalidate class="flex flex-col gap-6">
+    <div class="mb-4 flex items-center justify-center gap-2" id="search-filter">
+      <label class="max-w-[500px] grow px-2 py-1 text-center text-sm">
+        <span class="sr-only text-base">{t("component.filtering.search")}</span>
+        <div class="relative">
+          <input
+            type="search"
+            class="py-2 !pl-12 !pr-2"
+            placeholder={t("component.filtering.searchPlaceholder")}
+          />
+          <Icon
+            name="mdi:search"
+            size={24}
+            class="absolute left-4 top-1/2 -translate-y-1/2 opacity-70"
+          />
+        </div>
+      </label>
+    </div>
+    <fieldset
+      class="flex flex-col items-center justify-center gap-2"
+      aria-labelledby="grid-legend"
+    >
+      <div id="grid-legend" class="text-base font-bold">
+        {t("component.filtering.gridSize")}
+      </div>
+      <ul class="flex flex-row items-center justify-center gap-2">
+        <li>
+          <IconButton
+            type="button"
+            name="mdi:grid-large"
+            label={t("component.filtering.normalGrid")}
+            id="grid-button"
+            class="grid-large-button opacity-30 aria-pressed:opacity-100"
+          />
+        </li>
+        <li>
+          <IconButton
+            type="button"
+            name="mdi:grid"
+            label={t("component.filtering.compactGrid")}
+            id="grid-small-button"
+            class="grid-small-button opacity-30 aria-pressed:opacity-100"
+          />
+        </li>
+      </ul>
+    </fieldset>
+    {
+      years && years.length > 1 && (
+        <RollFilter
+          id="year-filter"
+          legendId="year-filter-legend"
+          title={t("component.filtering.year")}
+          items={years.map((year: number) => year.toString())}
+          reverseSort={true}
+        />
+      )
+    }
+    <RollFilter
+      id="camera-filter"
+      legendId="camera-filter-legend"
+      title={t("component.filtering.camera")}
+      items={cameras}
+    />
+    <RollFilter
+      id="film-type-filter"
+      legendId="film-type-filter-legend"
+      title={t("component.filtering.filmType")}
+      items={filmTypes}
+    />
+    <RollFilter
+      id="film-filter"
+      legendId="film-filter-legend"
+      title={t("component.filtering.film")}
+      items={films}
+    />
+    {
+      formats && formats.length > 1 && (
+        <RollFilter
+          id="format-filter"
+          legendId="format-filter-legend"
+          title={t("component.filtering.format")}
+          items={formats}
+        />
+      )
+    }
+    {
+      locations && locations.length > 0 && (
+        <RollFilter
+          id="location-filter"
+          legendId="location-filter-legend"
+          title={t("component.filtering.location")}
+          items={locations}
+        />
+      )
+    }
+    {
+      tags && tags.length > 0 && (
+        <RollFilter
+          id="tag-filter"
+          legendId="tag-filter-legend"
+          title={t("component.filtering.tag")}
+          items={tags}
+        />
+      )
+    }
+  </form>
+</SideSheet>
+
+<script>
+  import announcer from "../lib/aria-announcer";
+  import { setupDialog } from "../lib/dialog-utils";
+  import { useTranslations } from "../i18n/utils";
+
+  const t = useTranslations("en");
+
+  interface GridStateChangeEvent extends CustomEvent {
+    detail: {
+      isLargeGrid: boolean;
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    let typingTimeout: NodeJS.Timeout;
+    let checkboxTimeout: NodeJS.Timeout;
+
+    const dialog = setupDialog("filter-dialog");
+    const searchButton = document.getElementById("search-button");
+    const filterForm = document.getElementById("filter-form");
+    const allCameraFilterButtons = document.querySelectorAll(
+      "#camera-filter .chip-button"
+    );
+    const allFilmTypeFilterButtons = document.querySelectorAll(
+      "#film-type-filter .chip-button"
+    );
+    const allFormatFilterButtons = document.querySelectorAll(
+      "#format-filter .chip-button"
+    );
+    const allYearFilterButtons = document.querySelectorAll(
+      "#year-filter .chip-button"
+    );
+    const allTagFilterButtons = document.querySelectorAll(
+      "#tag-filter .chip-button"
+    );
+    const allRolls = document.querySelectorAll(".roll-card");
+    const searchInput = document.querySelector(
+      "#search-filter input[type='search']"
+    ) as HTMLInputElement | null;
+
+    function updateURL() {
+      const params = new URLSearchParams(window.location.search);
+      const cameras = Array.from(
+        document.querySelectorAll(
+          '#camera-filter input[type="checkbox"]:checked'
+        )
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+      const films = Array.from(
+        document.querySelectorAll('#film-filter input[type="checkbox"]:checked')
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+      const filmTypes = Array.from(
+        document.querySelectorAll(
+          '#film-type-filter input[type="checkbox"]:checked'
+        )
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+
+      const formats = Array.from(
+        document.querySelectorAll(
+          '#format-filter input[type="checkbox"]:checked'
+        )
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+      const years = Array.from(
+        document.querySelectorAll('#year-filter input[type="checkbox"]:checked')
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+      const searchValue = (
+        document.querySelector(
+          '#search-filter input[type="search"]'
+        ) as HTMLInputElement
+      )?.value;
+      const locations = Array.from(
+        document.querySelectorAll(
+          '#location-filter input[type="checkbox"]:checked'
+        )
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+      const tags = Array.from(
+        document.querySelectorAll('#tag-filter input[type="checkbox"]:checked')
+      ).map((el) => el.nextElementSibling?.textContent?.trim());
+
+      params.set("cameras", cameras.join(","));
+      params.set("films", films.join(","));
+      params.set("film-types", filmTypes.join(","));
+      params.set("formats", formats.join(","));
+      if (years.length > 0) {
+        params.set("years", years.join(","));
+      } else {
+        params.delete("years");
+      }
+      if (searchValue) {
+        params.set("search", searchValue);
+      } else {
+        params.delete("search");
+      }
+      if (locations.length > 0) {
+        params.set("locations", locations.join(","));
+      } else {
+        params.delete("locations");
+      }
+      if (tags.length > 0) {
+        params.set("tags", tags.join(","));
+      } else {
+        params.delete("tags");
+      }
+
+      window.history.replaceState(
+        {},
+        "",
+        `${window.location.pathname}?${params}`
+      );
+    }
+
+    const getAnnouncement = () => {
+      const visibleRolls = document.querySelectorAll(
+        ".roll-card:not(.hidden)"
+      ).length;
+      const totalRolls = document.querySelectorAll(".roll-card").length;
+      const activeFilters = document.querySelectorAll(
+        '#camera-filter input[type="checkbox"]:checked, #film-type-filter input[type="checkbox"]:checked, #film-filter input[type="checkbox"]:checked, #year-filter input[type="checkbox"]:checked, #format-filter input[type="checkbox"]:checked, #location-filter input[type="checkbox"]:checked'
+      ).length;
+
+      const showingText = t("component.filtering.showing", {
+        visible: visibleRolls,
+        total: totalRolls,
+      });
+
+      if (activeFilters > 0) {
+        const withFiltersText = t("component.filtering.withFilters", {
+          count: activeFilters,
+          filters: activeFilters === 1 ? "filter" : "filters",
+        });
+        return `${showingText} ${withFiltersText}`;
+      }
+
+      return showingText;
+    };
+
+    function updateVisibility(shouldAnnounce: boolean = false) {
+      const activeCameras = Array.from(
+        document.querySelectorAll(
+          '#camera-filter input[type="checkbox"]:checked'
+        )
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+      const activeFilmTypes = Array.from(
+        document.querySelectorAll(
+          '#film-type-filter input[type="checkbox"]:checked'
+        )
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+      const activeFormats = Array.from(
+        document.querySelectorAll(
+          '#format-filter input[type="checkbox"]:checked'
+        )
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+      const activeYears = Array.from(
+        document.querySelectorAll('#year-filter input[type="checkbox"]:checked')
+      ).map((checkbox) =>
+        parseInt(checkbox.nextElementSibling?.textContent?.trim() || "0")
+      );
+      const activeLocations = Array.from(
+        document.querySelectorAll(
+          '#location-filter input[type="checkbox"]:checked'
+        )
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+      const activeFilms = Array.from(
+        document.querySelectorAll('#film-filter input[type="checkbox"]:checked')
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+      const activeTags = Array.from(
+        document.querySelectorAll('#tag-filter input[type="checkbox"]:checked')
+      ).map((checkbox) => checkbox.nextElementSibling?.textContent?.trim());
+
+      allRolls.forEach((roll) => {
+        const rollCamera = roll.getAttribute("data-camera") || "";
+        const rollFilmType = roll.getAttribute("data-film-type") || "";
+        const rollFormat = roll.getAttribute("data-format") || "";
+        const rollFilm = roll.getAttribute("data-film") || "";
+        const rollAltTexts = roll.getAttribute("data-alt-texts") || "";
+        const rollTitle = roll.getAttribute("data-title") || "";
+        const rollDate = roll.getAttribute("data-date") || "";
+        const rollLenses = roll.getAttribute("data-lenses") || "";
+        const rollKeywords = roll.getAttribute("data-keywords") || "";
+        const rollDeveloperNotes =
+          roll.getAttribute("data-developer-notes") || "";
+        const rollYear = parseInt(rollDate.split(" ")[1]); // Assuming data-date is in YYYY-MM-DD format
+        const rollMonth = roll.getAttribute("data-date")?.split(" ")[0] || "";
+        const rollLocation = roll.getAttribute("data-location") || "";
+        const rollTags = roll.getAttribute("data-tags") || "";
+        const matchesCamera = activeCameras.length
+          ? activeCameras.includes(rollCamera)
+          : true;
+        const matchesFilmType = activeFilmTypes.length
+          ? activeFilmTypes.includes(rollFilmType)
+          : true;
+        const matchesFormat = activeFormats.length
+          ? activeFormats.includes(rollFormat)
+          : true;
+        const matchesYear = activeYears.length
+          ? activeYears.includes(rollYear)
+          : true;
+        const matchesLocation = activeLocations.length
+          ? activeLocations.some((loc) => loc && rollLocation.includes(loc))
+          : true;
+        const matchesFilm = activeFilms.length
+          ? activeFilms.includes(rollFilm)
+          : true;
+        const matchesTags = activeTags.length
+          ? activeTags.some((tag) => tag && rollTags.includes(tag))
+          : true;
+        const searchInputValue = searchInput?.value?.toLowerCase();
+        const matchesSearch =
+          rollCamera.toLowerCase().includes(searchInputValue || "") ||
+          rollFilmType.toLowerCase().includes(searchInputValue || "") ||
+          rollFormat.toLowerCase().includes(searchInputValue || "") ||
+          rollFilm.toLowerCase().includes(searchInputValue || "") ||
+          rollFilmType.toLowerCase().includes(searchInputValue || "") ||
+          rollAltTexts.toLowerCase().includes(searchInputValue || "") ||
+          rollTitle.toLowerCase().includes(searchInputValue || "") ||
+          rollDate.toLowerCase().includes(searchInputValue || "") ||
+          rollLenses.toLowerCase().includes(searchInputValue || "") ||
+          rollKeywords.toLowerCase().includes(searchInputValue || "") ||
+          rollDeveloperNotes.toLowerCase().includes(searchInputValue || "") ||
+          rollYear.toString().includes(searchInputValue || "") ||
+          rollMonth.toString().includes(searchInputValue || "") ||
+          rollLocation.toLowerCase().includes(searchInputValue || "") ||
+          rollTags.toLowerCase().includes(searchInputValue || "");
+
+        if (
+          matchesCamera &&
+          matchesFilmType &&
+          matchesFilm &&
+          matchesFormat &&
+          matchesYear &&
+          matchesLocation &&
+          matchesTags &&
+          matchesSearch
+        ) {
+          roll.classList.remove("hidden");
+        } else {
+          roll.classList.add("hidden");
+        }
+      });
+
+      if (shouldAnnounce) {
+        clearTimeout(checkboxTimeout);
+        checkboxTimeout = setTimeout(() => {
+          announcer.announce(getAnnouncement(), "polite");
+        }, 750);
+      }
+      const activeFilters = document.querySelectorAll(
+        '#camera-filter input[type="checkbox"]:checked, #tag-filter input[type="checkbox"]:checked, #film-type-filter input[type="checkbox"]:checked, #film-filter input[type="checkbox"]:checked, #year-filter input[type="checkbox"]:checked, #format-filter input[type="checkbox"]:checked, #location-filter input[type="checkbox"]:checked'
+      ).length;
+      const activeFiltersCountElement = document.getElementById(
+        "active-filters-count"
+      );
+      if (activeFiltersCountElement && activeFilters > 0) {
+        // activeFiltersCountElement.textContent = activeFilters.toString();
+        activeFiltersCountElement.style.display = "flex";
+      }
+      if (activeFilters === 0 && activeFiltersCountElement) {
+        activeFiltersCountElement.style.display = "none";
+      }
+
+      // Update visible status in the header
+      const visibleStatusElement = document.getElementById("visible-status");
+      const visibleRolls = document.querySelectorAll(
+        ".roll-card:not(.hidden)"
+      ).length;
+      const totalRolls = document.querySelectorAll(".roll-card").length;
+      if (visibleStatusElement && totalRolls > 0) {
+        if (visibleRolls < totalRolls) {
+          visibleStatusElement.textContent = `${visibleRolls} of ${totalRolls} visible`;
+        } else {
+          visibleStatusElement.textContent = "";
+        }
+      }
+
+      // Grey out year headings if no visible roll cards for that year
+      const yearHeadings = document.querySelectorAll('h2[id^="year-"]');
+      yearHeadings.forEach((heading) => {
+        const year = heading.textContent?.trim();
+        const rollCardsForYear = document.querySelectorAll(
+          `.roll-card[data-date$=" ${year}"]:not(.hidden)`
+        ).length;
+        if (rollCardsForYear === 0) {
+          heading.classList.add("text-gray-500");
+        } else {
+          heading.classList.remove("text-gray-500");
+        }
+      });
+    }
+
+    if (searchButton) {
+      searchButton.addEventListener("click", () => {
+        if (dialog) {
+          if (dialog.open) {
+            dialog.close();
+          } else {
+            dialog.showModal();
+          }
+          searchButton.setAttribute(
+            "aria-expanded",
+            dialog.open ? "true" : "false"
+          );
+        }
+      });
+    }
+
+    if (filterForm) {
+      filterForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        updateVisibility(true);
+        updateURL();
+        dialog?.close();
+      });
+    }
+
+    // Function to set filters from URL parameters including search input
+    function setFiltersFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const cameras = params?.get("cameras")
+        ? params?.get("cameras")?.split(",")
+        : [];
+      const films = params?.get("films")
+        ? params?.get("films")?.split(",")
+        : [];
+      const filmTypes = params?.get("film-types")
+        ? params?.get("film-types")?.split(",")
+        : [];
+      const formats = params.get("formats")
+        ? params?.get("formats")?.split(",")
+        : [];
+      const years = params.get("years") ? params?.get("years")?.split(",") : [];
+      const search = params.get("search");
+      const locations = params.get("locations")
+        ? params.get("locations")?.split(",")
+        : [];
+      const tags = params?.get("tags") ? params?.get("tags")?.split(",") : [];
+
+      document
+        .querySelectorAll('#camera-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = cameras?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#film-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = films?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#film-type-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = filmTypes?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#format-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = formats?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#year-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = years?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#location-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = locations?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#film-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = films?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      document
+        .querySelectorAll('#tag-filter input[type="checkbox"]')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .forEach((checkbox: any) => {
+          checkbox.checked = tags?.includes(
+            checkbox.nextElementSibling?.textContent?.trim() || ""
+          );
+        });
+      if (search) {
+        (
+          document.querySelector(
+            "#search-filter input[type='search']"
+          ) as HTMLInputElement
+        ).value = search;
+      }
+
+      /* // Check if any filters are active and open the details if so
+      if (
+        (cameras && cameras?.length > 0) ||
+        (films && films?.length > 0) ||
+        (formats && formats?.length > 0) ||
+        (years && years?.length > 0) ||
+        (locations && locations?.length > 0) ||
+        (tags && tags?.length > 0) ||
+        search
+      ) {
+        const dialogElement = document.querySelector("#filter-dialog");
+        if (dialogElement) {
+          (dialogElement as HTMLDialogElement).showModal();
+          searchButton?.setAttribute("aria-expanded", "true");
+        }
+      } */
+    }
+    // Call setFiltersFromURL on page load
+    setFiltersFromURL();
+    updateVisibility(); // Update visibility based on initial filter settings
+
+    // Update URL when filters change
+    allCameraFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    allFilmTypeFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    allFormatFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    allYearFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    allTagFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    searchInput?.addEventListener("input", () => {
+      updateVisibility(true);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        announcer.announce(getAnnouncement(), "polite");
+        updateURL();
+      }, 750);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const dialogElement = document.querySelector("#filter-dialog");
+
+      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
+        event.preventDefault();
+        if (dialogElement && !(dialogElement as HTMLDialogElement).open) {
+          (dialogElement as HTMLDialogElement).showModal();
+        }
+        searchInput?.focus();
+      }
+    });
+
+    // Add location filter button and rolls handling
+    const allLocationFilterButtons = document.querySelectorAll(
+      "#location-filter .chip-button"
+    );
+
+    // Add event listeners for location filter buttons
+    allLocationFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    // Add film filter button and rolls handling
+    const allFilmFilterButtons = document.querySelectorAll(
+      "#film-filter .chip-button"
+    );
+
+    // Add event listeners for film filter buttons
+    allFilmFilterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        updateVisibility(true);
+        updateURL();
+      });
+    });
+
+    // Close dialog when clicking outside
+    const dialogElement = document.querySelector("#filter-dialog");
+    const closeFilterDialogButton = document.getElementById(
+      "close-filter-dialog"
+    );
+    if (closeFilterDialogButton) {
+      closeFilterDialogButton.addEventListener("click", () => {
+        (dialogElement as HTMLDialogElement).close();
+      });
+    }
+    dialogElement?.addEventListener("click", (event) => {
+      if (event.target === dialogElement) {
+        (dialogElement as HTMLDialogElement).close();
+      }
+    });
+
+    const gridLargeButton = document.getElementById("grid-button");
+    const gridSmallButton = document.getElementById("grid-small-button");
+
+    function updateGridState(isLargeGrid: boolean) {
+      if (isLargeGrid) {
+        document.documentElement.classList.remove("compact-grid");
+        gridLargeButton?.setAttribute("aria-pressed", "true");
+        gridSmallButton?.setAttribute("aria-pressed", "false");
+        localStorage.grid = "normal";
+      } else {
+        document.documentElement.classList.add("compact-grid");
+        gridLargeButton?.setAttribute("aria-pressed", "false");
+        gridSmallButton?.setAttribute("aria-pressed", "true");
+        localStorage.grid = "compact";
+      }
+
+      // Sync with footer button if it exists
+      const footerGridButton = document.getElementById("grid-selector");
+      if (footerGridButton) {
+        const largeIcon = footerGridButton.querySelector(".grid-large-icon");
+        const smallIcon = footerGridButton.querySelector(".grid-small-icon");
+        const largeText = footerGridButton.querySelector(".grid-large-text");
+        const smallText = footerGridButton.querySelector(".grid-small-text");
+
+        if (isLargeGrid) {
+          largeIcon?.classList.remove("hidden");
+          smallIcon?.classList.add("hidden");
+          largeText?.classList.remove("hidden");
+          smallText?.classList.add("hidden");
+          footerGridButton.setAttribute("aria-pressed", "true");
+        } else {
+          largeIcon?.classList.add("hidden");
+          smallIcon?.classList.remove("hidden");
+          largeText?.classList.add("hidden");
+          smallText?.classList.remove("hidden");
+          footerGridButton.setAttribute("aria-pressed", "false");
+        }
+      }
+    }
+
+    gridLargeButton?.addEventListener("click", () => {
+      updateGridState(true);
+    });
+
+    gridSmallButton?.addEventListener("click", () => {
+      updateGridState(false);
+    });
+
+    // Set initial state based on class presence
+    const initialState =
+      !document.documentElement.classList.contains("compact-grid");
+    updateGridState(initialState);
+
+    // Listen for changes from the footer button
+    document.addEventListener("gridStateChange", ((e: GridStateChangeEvent) => {
+      updateGridState(e.detail.isLargeGrid);
+    }) as EventListener);
+  });
+</script>

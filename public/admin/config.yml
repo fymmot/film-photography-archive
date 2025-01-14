@@ -1,0 +1,199 @@
+local_backend: true
+backend:
+  name: git-gateway
+  branch: main
+media_folder: src/assets/images/photos/
+collections:
+  - name: features
+    label: Features
+    label_singular: Feature
+    folder: src/content/features
+    create: true
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Hero image
+        name: heroImage
+        widget: image
+        required: false
+        description: This image will be displayed when the feature is linked to from another page. If it does not exist, the first image in the collection will be used.
+      - label: Images
+        name: images
+        widget: list
+        description: Images in the feature that do not have a roll.
+        required: false
+        fields:
+          - name: image
+            label: Image
+            widget: image
+          - name: alt
+            label: Alt
+            widget: string
+            required: false
+  - name: rolls
+    label: Film rolls
+    label_singular: Film roll
+    slug: '{{roll_year}}-{{roll_month}}-{{roll_id}}-{{slug}}'
+    summary: '{{filename}}'
+    folder: src/content/rolls
+    create: true
+    fields:
+      - label: Roll number
+        name: roll_id
+        widget: number
+        min: 1
+        max: 99
+        value_type: int
+      - label: Roll year
+        name: roll_year
+        widget: number
+        min: 1900
+        max: 2099
+        default: 2025
+      - label: Roll month
+        name: roll_month
+        widget: select
+        options:
+          - label: January
+            value: 1
+          - label: February
+            value: 2
+          - label: March
+            value: 3
+          - label: April
+            value: 4
+          - label: May
+            value: 5
+          - label: June
+            value: 6
+          - label: July
+            value: 7
+          - label: August
+            value: 8
+          - label: September
+            value: 9
+          - label: October
+            value: 10
+          - label: November
+            value: 11
+          - label: December
+            value: 12
+        default: 1
+      - label: Publish date
+        name: publish_date
+        widget: datetime
+        required: false
+        default: '{{now}}'
+      - label: Title
+        name: title
+        widget: string
+        required: true
+      - label: Camera
+        name: camera
+        widget: select
+        required: true
+        options:
+          - Leica M6
+          - Olympus XA2
+          - Minolta 7000
+          - Pentax ME
+          - Cosina Voigtländer Bessa R
+          - Zorki 4K
+          - Pentax MX
+          - Hasselblad 500CM
+          - Minolta Autocord
+      - label: Lenses
+        name: lenses
+        widget: select
+        options:
+          - M-Rokkor 40mm f/2
+          - Elmar-C 90mm f/4
+          - Planar CF 80mm f/2.8
+          - Rokkor 75mm f/3.5
+          - Color-Skopar 35mm f/2.5
+          - Jupiter-8 50mm f/2
+          - Nokton SC 40mm f/1.4
+          - Pentax-M 200mm f/4
+          - Pentax-M 50mm f/1.7
+          - Minolta AF 50mm f/1.7
+        multiple: true
+        required: false
+      - label: Film
+        name: film
+        widget: select
+        required: true
+        options:
+          - Ilford HP5 Plus
+          - Ilford FP4
+          - Ilford Delta 100
+          - Ilford Delta 400
+          - Rollei Retro 80S
+          - Fomapan 100
+          - Fomapan 200
+          - Fomapan 400
+          - Kodak Portra 400
+          - Kodak Portra 160
+          - Kodak Gold 200
+          - Fujicolor C200
+          - Fujicolor Superia X-tra 400
+          - Fujicolor Superia 200
+          - Kodak Provia 100F
+          - Kodak Provia 400F
+          - Fujicolor Pro 400H
+      - label: Film speed
+        name: film_speed
+        widget: number
+        required: false
+      - label: Developer
+        name: developer
+        widget: string
+        required: false
+      - label: Locations
+        name: location
+        widget: list
+        required: false
+        allow_add: true
+        field:
+          name: Location
+      - label: Tags
+        name: tags
+        widget: select
+        required: false
+        multiple: true
+        options:
+          - Favorite
+          - Development fail
+      - label: Comments
+        name: comments
+        widget: markdown
+        required: false
+      - label: Start Date
+        name: start_date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        default: '{{now}}'
+        required: true
+      - label: End Date
+        name: end_date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        default: '{{now}}'
+        required: true
+      - label: Images
+        name: images
+        widget: list
+        fields:
+          - name: image
+            label: Image
+            widget: image
+          - name: alt
+            label: Alt
+            widget: string
+            required: false
+          - name: feature
+            label: Feature
+            widget: select
+            required: false
+            options:
+              - Street

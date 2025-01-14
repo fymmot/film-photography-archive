@@ -1,0 +1,350 @@
+---
+import { getEntry, getCollection } from "astro:content";
+import { getImage } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import { AstroSeo } from "@astrolib/seo";
+import globalConfig from "../../../global.config.yml";
+import type { Roll } from "../../types";
+import { createCollage, type CollageImage } from "../../lib/image-utils";
+
+export async function getStaticPaths() {
+  const features = await getCollection("features");
+  return features.map((feature) => ({
+    params: { slug: feature.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+let feature;
+try {
+  feature = await getEntry("features", slug);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+} catch (error) {
+  return Astro.redirect("/404");
+}
+const { images } = feature.data;
+
+const rolls = (await getCollection("rolls")) as unknown as Roll[];
+const featuredImages = rolls
+  .map((roll) =>
+    roll.data.images
+      ?.filter(
+        (image) =>
+          image.feature?.toLowerCase() === (slug as string).toLowerCase()
+      )
+      .map((image) => ({
+        ...image,
+        rollSlug: roll.slug,
+        rollTitle: `Roll #${roll.data.roll_id} ${new Date(
+          roll.data.roll_year,
+          roll.data.roll_month,
+          0
+        ).toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        })}`,
+      }))
+  )
+  .flat();
+const allFeaturedImages = [...(images || []), ...(featuredImages || [])];
+
+if (allFeaturedImages?.length === 0) {
+  return Astro.redirect("/404");
+}
+const seoDescription = feature.data.description;
+const seoImages = await Promise.all(
+  allFeaturedImages?.slice(0, 1).map(async (image) => {
+    const seoImage = await getImage({
+      src: image!.image,
+      width: 1200,
+      format: "webp",
+      alt: image!.alt || "",
+    });
+    return {
+      url: `${Astro.url.origin}${seoImage?.src}`,
+      width: seoImage?.attributes.width,
+      height: seoImage?.attributes.height,
+      alt: seoImage?.attributes.alt,
+    };
+  }) || []
+);
+
+// Generate the collage for social sharing
+const collageImage = allFeaturedImages?.length
+  ? await createCollage(
+      allFeaturedImages as CollageImage[],
+      slug,
+      feature.data.title,
+      {
+        gridSize: 2,
+        gap: 4,
+        width: 1200,
+        height: 1200,
+      }
+    )
+  : null;
+const seoImageData = collageImage
+  ? { ...collageImage, url: `${Astro.url.origin}${collageImage.url}` }
+  : seoImages[0];
+
+const { name } = globalConfig;
+const canonicalUrl = Astro.url.href;
+const publishDate = new Date().toISOString();
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle } = landingPage.data;
+---
+
+<AstroSeo
+  title={`${feature.data.title} – ${pageTitle}`}
+  description={seoDescription}
+  twitter={{
+    cardType: "summary_large_image",
+  }}
+  openGraph={{
+    type: "article",
+    images: [seoImageData],
+    title: `${feature.data.title}`,
+    article: {
+      publishedTime: publishDate,
+      authors: [name],
+    },
+  }}
+  canonical={canonicalUrl}
+  additionalMetaTags={[
+    {
+      name: "twitter:label1",
+      content: "Photos by",
+    },
+    {
+      name: "twitter:data1",
+      content: name,
+    },
+  ]}
+/>
+<Layout title={`${feature.data.title} – ${pageTitle}`} h1={feature.data.title}>
+  {
+    allFeaturedImages && allFeaturedImages.length > 0 ? (
+      <section class="container mx-auto mb-24 mt-8 max-w-screen-lg">
+        <ul
+          id="lightGallery"
+          class="mt-8 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-1 xl:gap-x-8"
+        >
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {allFeaturedImages.map(async (image: any, index: number) => {
+            const optimizedImage = await getImage({
+              src: image.image,
+              widths: [240, 720, 2000],
+              format: "webp",
+            });
+            return (
+              <li class="flex cursor-zoom-in flex-col gap-2">
+                <a
+                  href={optimizedImage.src}
+                  class="trigger"
+                  data-pswp-srcset={optimizedImage.srcSet.attribute}
+                  data-pswp-width={optimizedImage.attributes.width}
+                  data-pswp-height={optimizedImage.attributes.height}
+                  aria-label={`${image.alt ? image.alt + ", " : ""}open photo${image.alt ? "" : ` ${index + 1}`} in full screen`}
+                >
+                  <img
+                    loading={index < 2 ? "eager" : "lazy"}
+                    fetchpriority={index < 2 ? "high" : "auto"}
+                    src={optimizedImage.src}
+                    srcset={optimizedImage.srcSet.attribute}
+                    width={optimizedImage.attributes.width}
+                    height={optimizedImage.attributes.height}
+                    alt={image.alt || ""}
+                    sizes="(min-width: 720px) 80vw, 100vw"
+                    class="lg-item"
+                  />
+                </a>
+                {image.rollSlug && image.rollTitle && (
+                  <p class="mt-2 text-center text-sm opacity-70">
+                    From{" "}
+                    <a
+                      class="underline underline-offset-2"
+                      href={`/rolls/${image.rollSlug}`}
+                    >
+                      {image.rollTitle}
+                    </a>
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ) : null
+  }
+</Layout>
+
+<script>
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+  import "photoswipe/style.css";
+
+  interface FullscreenAPI {
+    request: (el: HTMLElement) => void;
+    exit: () => Promise<void>;
+    isFullscreen: () => Element | null;
+    change: string;
+    error: string;
+  }
+
+  function getFullscreenAPI(): FullscreenAPI | undefined {
+    let api: FullscreenAPI | undefined;
+    let enterFS: string | undefined;
+    let exitFS: string | undefined;
+    let elementFS: string | undefined;
+    let changeEvent: string | undefined;
+    let errorEvent: string | undefined;
+
+    if (document.documentElement.requestFullscreen !== undefined) {
+      enterFS = "requestFullscreen";
+      exitFS = "exitFullscreen";
+      elementFS = "fullscreenElement";
+      changeEvent = "fullscreenchange";
+      errorEvent = "fullscreenerror";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } else if ((document.documentElement as any).webkitRequestFullscreen) {
+      enterFS = "webkitRequestFullscreen";
+      exitFS = "webkitExitFullscreen";
+      elementFS = "webkitFullscreenElement";
+      changeEvent = "webkitfullscreenchange";
+      errorEvent = "webkitfullscreenerror";
+    }
+
+    if (enterFS && exitFS && elementFS && changeEvent && errorEvent) {
+      api = {
+        request: (el: HTMLElement) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (el as any)[enterFS]();
+        },
+        exit: () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (document as any)[exitFS]();
+        },
+        isFullscreen: () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (document as any)[elementFS];
+        },
+        change: changeEvent,
+        error: errorEvent,
+      };
+    }
+
+    return api;
+  }
+
+  function getContainer(): HTMLElement {
+    const pswpContainer = document.createElement("div");
+    pswpContainer.style.background = "#000";
+    pswpContainer.style.width = "100%";
+    pswpContainer.style.height = "100%";
+    pswpContainer.style.display = "none";
+    document.body.appendChild(pswpContainer);
+    return pswpContainer;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector("#lightGallery");
+    const fullscreenAPI = getFullscreenAPI();
+    const pswpContainer = getContainer();
+    const fullscreenEnabled =
+      document.documentElement.classList.contains("fullscreen-enabled");
+
+    if (container) {
+      interface LightboxOptions {
+        gallery: string;
+        children: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        pswpModule: () => Promise<any>;
+        bgOpacity: number;
+        appendToEl: HTMLElement;
+        showAnimationDuration?: number | undefined;
+        hideAnimationDuration?: number | undefined;
+        preloadFirstSlide: boolean | undefined;
+        openPromise?: () => Promise<void>;
+      }
+
+      const lightboxOptions: LightboxOptions = {
+        gallery: "#lightGallery",
+        children: "a.trigger",
+        pswpModule: () => import("photoswipe"),
+        bgOpacity: 0.92,
+        appendToEl:
+          fullscreenEnabled && fullscreenAPI ? pswpContainer : document.body,
+        preloadFirstSlide: fullscreenEnabled ? false : undefined,
+        ...(fullscreenEnabled
+          ? { showAnimationDuration: 0, hideAnimationDuration: 0 }
+          : {}),
+      };
+
+      if (fullscreenAPI && fullscreenEnabled) {
+        lightboxOptions.openPromise = () => {
+          return new Promise((resolve) => {
+            if (fullscreenAPI.isFullscreen()) {
+              resolve();
+              return;
+            }
+
+            document.addEventListener(
+              fullscreenAPI.change,
+              () => {
+                pswpContainer.style.display = "block";
+                setTimeout(() => {
+                  resolve();
+                }, 300);
+              },
+              { once: true }
+            );
+
+            fullscreenAPI.request(pswpContainer);
+          });
+        };
+      }
+      const lightbox = new PhotoSwipeLightbox(lightboxOptions);
+
+      if (fullscreenAPI) {
+        document.addEventListener(fullscreenAPI.change, () => {
+          if (!fullscreenAPI.isFullscreen()) {
+            lightbox.pswp?.close();
+          }
+        });
+      }
+
+      lightbox.on("close", () => {
+        pswpContainer.style.display = "none";
+        if (fullscreenAPI && fullscreenAPI.isFullscreen()) {
+          fullscreenAPI.exit();
+        }
+      });
+
+      lightbox.init();
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const infoButton = document.getElementById("info-button");
+    if (infoButton) {
+      infoButton.addEventListener("click", () => {
+        const sideSheet = document.getElementById("roll-info-sheet");
+        if (sideSheet) {
+          (sideSheet as HTMLDialogElement).showModal();
+          const closeButton = document.getElementById(
+            "close-roll-info-sheet-dialog"
+          );
+          closeButton?.addEventListener("click", () => {
+            (sideSheet as HTMLDialogElement).close();
+          });
+          sideSheet.addEventListener("click", (event) => {
+            if (event.target === sideSheet) {
+              (sideSheet as HTMLDialogElement).close();
+            }
+          });
+        }
+      });
+    }
+  });
+</script>

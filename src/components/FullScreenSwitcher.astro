@@ -1,0 +1,94 @@
+---
+import { Icon } from "astro-icon/components";
+import globalConfig from "../../global.config.yml";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+const { inverted = true, ...other } = Astro.props;
+const { default_lightbox } = globalConfig;
+---
+
+<div class="flex flex-row items-center gap-2">
+  <button
+    type="button"
+    id="fullscreen-toggle"
+    {...other}
+    class="flex items-center gap-2"
+    data-default-lightbox={default_lightbox}
+  >
+    <div
+      class={`flex items-center justify-center rounded-full bg-neutral-100 p-2 dark:bg-neutral-900 ${inverted ? "bg-neutral-900 text-white dark:bg-neutral-900" : ""} ${other.class || ""}`}
+    >
+      <Icon
+        size={24}
+        name="mdi:fullscreen-exit"
+        class="hidden"
+        id="icon-fullscreen-disabled"
+      />
+      <Icon
+        size={24}
+        class="hidden"
+        name="mdi:fullscreen"
+        id="icon-fullscreen-enabled"
+      />
+    </div>
+    <span
+      id="fullscreen-toggle-label"
+      class={`${inverted ? "" : ""} sr-only text-sm sm:not-sr-only`}
+    >
+      <span id="label-fullscreen-enabled" class="hidden"
+        >{t("component.fullscreen.enabled")}</span
+      >
+      <span id="label-fullscreen-disabled" class="hidden"
+        >{t("component.fullscreen.disabled")}</span
+      >
+    </span>
+  </button>
+</div>
+<noscript>
+  <style>
+    #fullscreen-toggle {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const fullscreenButton = document.getElementById("fullscreen-toggle");
+    const toggleFullscreenState = (isEnabled) => {
+      document.documentElement.classList.toggle(
+        "fullscreen-enabled",
+        isEnabled
+      );
+      document
+        .getElementById("icon-fullscreen-enabled")
+        ?.classList.toggle("hidden", !isEnabled);
+      document
+        .getElementById("icon-fullscreen-disabled")
+        ?.classList.toggle("hidden", isEnabled);
+      document
+        .getElementById("label-fullscreen-enabled")
+        ?.classList.toggle("hidden", !isEnabled);
+      document
+        .getElementById("label-fullscreen-disabled")
+        ?.classList.toggle("hidden", isEnabled);
+      fullscreenButton.setAttribute("aria-pressed", isEnabled);
+    };
+
+    const defaultLightbox = fullscreenButton.getAttribute(
+      "data-default-lightbox"
+    );
+    const fullscreenState =
+      localStorage.getItem("fullscreen") === "enabled" ||
+      (localStorage.getItem("fullscreen") === null &&
+        defaultLightbox === "fullscreen");
+    toggleFullscreenState(fullscreenState);
+
+    fullscreenButton?.addEventListener("click", () => {
+      const isEnabled = localStorage.fullscreen !== "enabled";
+      localStorage.fullscreen = isEnabled ? "enabled" : "disabled";
+      toggleFullscreenState(isEnabled);
+    });
+  });
+</script>

@@ -1,0 +1,184 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import RollCard from "../../components/RollCard.astro";
+import Filtering from "../../components/Filtering.astro";
+import { getCollection, getEntry } from "astro:content";
+import type { Roll } from "../../types";
+import { AstroSeo } from "@astrolib/seo";
+import globalConfig from "../../../global.config.yml";
+import { createCollage, type CollageImage } from "../../lib/image-utils";
+import { useTranslations } from "../../i18n/utils";
+
+const t = useTranslations();
+
+const rolls = (await getCollection("rolls")) as unknown as Roll[];
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle } = landingPage.data;
+
+const sortedRolls: Roll[] = rolls.sort((a, b) => {
+  const dateA = new Date(a.data.roll_year, a.data.roll_month, 0);
+  const dateB = new Date(b.data.roll_year, b.data.roll_month, 0);
+
+  const yearMonthA = dateA.getFullYear() * 100 + dateA.getMonth();
+  const yearMonthB = dateB.getFullYear() * 100 + dateB.getMonth();
+
+  if (yearMonthA === yearMonthB) {
+    return b.data.roll_id - a.data.roll_id; // Changed to sort roll_id in descending order
+  } else {
+    return yearMonthB - yearMonthA;
+  }
+});
+
+// Group rolls by year
+const rollsByYear = new Map<number, Roll[]>();
+sortedRolls.forEach((roll) => {
+  const year = new Date(
+    roll.data.roll_year,
+    roll.data.roll_month,
+    0
+  ).getFullYear();
+  const existing = rollsByYear.get(year) || [];
+  existing.push(roll);
+  rollsByYear.set(year, existing);
+});
+const cameras = Array.from(
+  new Set(sortedRolls.map((roll) => roll.data.camera))
+);
+const filmTypes = [t("rolls.blackAndWhite"), t("rolls.color")];
+const formats = [t("rolls.35mm"), t("rolls.120")];
+const films = Array.from(new Set(sortedRolls.map((roll) => roll.data.film)));
+const years = Array.from(
+  new Set(
+    sortedRolls.map((roll) =>
+      new Date(roll.data.roll_year, roll.data.roll_month, 0).getFullYear()
+    )
+  )
+).sort((a, b) => b - a);
+const tags = Array.from(
+  new Set(
+    sortedRolls
+      .flatMap((roll) => roll.data.tags)
+      .filter((tag) => tag && tag.length > 0)
+  )
+);
+const locations = Array.from(
+  new Set(
+    sortedRolls.flatMap((roll) =>
+      Array.isArray(roll.data.location)
+        ? roll.data.location.map((loc) => loc.trim())
+        : roll.data.location?.trim()
+          ? [roll.data.location.trim()]
+          : []
+    )
+  )
+);
+const { name } = globalConfig;
+const photographerText = `${t("rolls.by")} ${name}`;
+
+const seoDescription = [
+  t("rolls.allRolls", { count: rolls.length }),
+  years.length > 1
+    ? t("rolls.shotBetween", {
+        start: Math.min(...years),
+        end: Math.max(...years),
+      })
+    : t("rolls.shotIn", { year: years[0] }),
+  photographerText,
+].join(" ");
+
+// Create a collage from the first image of the most recent rolls
+const latestRollImages = sortedRolls
+  .slice(0, 9)
+  .map((roll) => roll.data.images?.[0])
+  .filter((image): image is CollageImage => !!image);
+
+// Determine grid size based on number of available images
+const gridSize = latestRollImages.length <= 4 ? 2 : 3;
+const maxImages = gridSize * gridSize;
+
+const collageImage = await createCollage(
+  latestRollImages.slice(0, maxImages),
+  "rolls-index",
+  t("rolls.latestRolls"),
+  {
+    gridSize,
+    gap: 4,
+    width: 1200,
+    height: 1200,
+  }
+);
+
+// Fallback to the first image from the latest roll if collage creation fails
+const fallbackImage = sortedRolls[0]?.data.images?.[0];
+const seoImageData = collageImage
+  ? { ...collageImage, url: `${Astro.url.origin}${collageImage.url}` }
+  : {
+      url: fallbackImage ? `${Astro.url.origin}${fallbackImage.image.src}` : "",
+      width: 1200,
+      height: 630,
+    };
+---
+
+<AstroSeo
+  description={seoDescription}
+  canonical={Astro.url.href}
+  openGraph={{
+    title: `${t("rolls.title")} – ${pageTitle}`,
+    description: seoDescription,
+    images: [seoImageData],
+  }}
+/>
+<Layout
+  title={`${t("rolls.title")} – ${pageTitle}`}
+  h1={t("rolls.title")}
+  showSearch
+>
+  <section class="mx-auto mb-24 max-w-screen-2xl">
+    <Filtering
+      cameras={cameras}
+      filmTypes={filmTypes}
+      formats={formats}
+      films={films}
+      years={years}
+      locations={locations}
+      tags={tags}
+    />
+
+    {
+      Array.from(rollsByYear.keys())
+        .sort((a, b) => b - a)
+        .map((year) => (
+          <>
+            <h2
+              class="mt-8 text-center text-lg font-bold first-of-type:mt-2 2xl:text-left"
+              id={`year-${year}`}
+            >
+              {year}
+            </h2>
+            <ul aria-labelledby={`year-${year}`} class="photo-grid">
+              {rollsByYear
+                .get(year)
+
+                ?.map((roll, index) => (
+                  <RollCard
+                    href={`/rolls/${roll.slug}`}
+                    headingLevel="h3"
+                    rollId={roll.data.roll_id}
+                    rollYear={roll.data.roll_year}
+                    rollMonth={roll.data.roll_month}
+                    priority={index < 2}
+                    location={roll.data.location}
+                    camera={roll.data.camera}
+                    film={roll.data.film}
+                    title={roll.data.title}
+                    images={roll.data.images}
+                    shouldGetExifData={true}
+                    tags={roll.data.tags}
+                  />
+                ))}
+            </ul>
+          </>
+        ))
+    }
+  </section>
+</Layout>

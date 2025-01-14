@@ -1,0 +1,186 @@
+---
+import Tag from "./Tag.astro";
+import photographerConfig from "../../global.config.yml";
+import { getImage } from "astro:assets";
+import { useTranslations } from "../i18n/utils";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  href: string;
+  film?: string;
+  camera?: string;
+  rollId: number;
+  rollYear: number;
+  rollMonth: number;
+  location?: string | string[];
+  priority?: boolean;
+  images?: { image: ImageMetadata; alt?: string; feature?: string }[];
+  headingLevel?: "h2" | "h3";
+  shouldGetExifData?: boolean;
+  imgStyle?: string;
+  tags?: string[];
+}
+
+const t = useTranslations();
+
+const {
+  title,
+  href,
+  film,
+  camera,
+  rollId,
+  rollYear,
+  rollMonth,
+  location,
+  priority,
+  images,
+  tags,
+  headingLevel = "h3",
+  imgStyle,
+  ...other
+} = Astro.props as Props;
+const Heading = headingLevel;
+const isMediumFormat =
+  camera && photographerConfig.camerasMediumFormat.includes(camera);
+const is35mm = camera && photographerConfig.cameras35mm.includes(camera);
+const isBWFilm =
+  film && photographerConfig.black_and_white_films.includes(film);
+const isColorFilm = film && photographerConfig.color_films.includes(film);
+
+const cardImages = Astro.props.images || [];
+const featuredImage = cardImages.find((img) => img.feature) || cardImages[0];
+
+const squareImage = await getImage({
+  src: featuredImage.image,
+  format: "avif",
+  fit: "cover",
+  width: 720,
+  height: 720,
+});
+---
+
+<li
+  class="roll-card mt-4"
+  data-camera={camera}
+  data-date={new Date(rollYear, rollMonth, 0).toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  })}
+  data-film={film}
+  data-format={isMediumFormat ? "120" : is35mm ? "35mm" : undefined}
+  data-film-type={isBWFilm
+    ? "Black and White"
+    : isColorFilm
+      ? "Color"
+      : undefined}
+  data-location={location ? JSON.stringify(location) : undefined}
+  data-alt-texts={JSON.stringify(
+    images
+      ?.map((img) => {
+        if (img.alt) return img.alt;
+        return null;
+      })
+      .filter((alt) => alt !== null)
+  )}
+  data-title={title}
+  data-date={new Date(rollYear, rollMonth, 0).toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  })}
+  data-tags={tags ? JSON.stringify(tags) : undefined}
+>
+  <a href={href} data-astro-prefetch class="group hover:cursor-pointer">
+    <div class="roll-card-inner">
+      <div class="w-full overflow-hidden">
+        {
+          images && images.length > 0 && (
+            <img
+              src={squareImage.src}
+              alt=""
+              width={500}
+              height={500}
+              loading={priority ? "eager" : "lazy"}
+              fetchpriority={priority ? "high" : "auto"}
+              style={imgStyle}
+              class="size-full object-cover object-center transition-all duration-300 group-hover:opacity-95 motion-safe:group-focus-within:scale-[1.02] motion-safe:group-hover:scale-[1.02]"
+              {...other}
+            />
+          )
+        }
+      </div>
+
+      <Heading class="mt-2 text-center text-sm"
+        ><span class="opacity-70"
+          >{t("component.rollCard.roll")} #{rollId}&nbsp;{
+            new Date(rollYear, rollMonth, 0).toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })
+          }</span
+        >
+        <br />
+        <span
+          class="text-lg font-semibold group-hover:underline group-hover:underline-offset-2"
+        >
+          {title}
+        </span>
+      </Heading>
+    </div>
+  </a>
+  <ul
+    class="mt-2 flex flex-row flex-wrap justify-center gap-2"
+    aria-label={t("component.rollCard.tags")}
+  >
+    {
+      camera && (
+        <Tag
+          text={camera}
+          href={`/rolls/?cameras=${encodeURIComponent(camera)}`}
+        />
+      )
+    }
+    {film && <Tag text={film} href={`/rolls/?films=${film}`} />}
+    {
+      Array.isArray(location) &&
+        location.length > 0 &&
+        location.map((loc) => (
+          <Tag text={loc} href={`/rolls/?locations=${loc}`} />
+        ))
+    }
+    {
+      Array.isArray(location) === false && location && (
+        <Tag text={location} href={`/rolls/?locations=${location}`} />
+      )
+    }
+  </ul>
+</li>
+
+<noscript>
+  <style>
+    a[href] {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  </style>
+</noscript>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".group").forEach((group) => {
+      group.addEventListener("mouseover", () => {
+        const link = group.querySelector("a");
+        if (link) {
+          const mouseOverEvent = new Event("mouseover");
+          link.dispatchEvent(mouseOverEvent);
+        }
+      });
+      group.addEventListener("click", () => {
+        const link = group.querySelector("a");
+        if (link) {
+          link.click();
+        }
+      });
+    });
+  });
+</script>

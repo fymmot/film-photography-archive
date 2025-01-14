@@ -1,0 +1,77 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Photo from "../../components/Photo.astro";
+import { getCollection, getEntry } from "astro:content";
+
+// Fetch rolls to access their images
+const rolls = await getCollection("rolls");
+
+const features = await getCollection("features");
+
+const featuresWithImages = features.filter((feature) => {
+  const hasOwnImages = feature.data.images && feature.data.images.length > 0;
+
+  const isInRollImages = rolls.some((roll) =>
+    roll.data.images?.some(
+      (image) =>
+        image &&
+        image.feature &&
+        image.feature?.toLowerCase() === feature.slug.toLowerCase()
+    )
+  );
+  return hasOwnImages || isInRollImages;
+});
+
+const allFeaturesWithImages = featuresWithImages.map((feature) => {
+  const featureImages = rolls
+    .map((roll) => roll.data.images || [])
+    .flat()
+    .filter(
+      (image) =>
+        image &&
+        image.feature &&
+        image.feature?.toLowerCase() === feature.slug.toLowerCase()
+    );
+
+  return {
+    ...feature,
+    heroImage: feature.data.heroImage || undefined,
+    images:
+      feature.data.images && feature.data.images.length > 0
+        ? feature.data.images
+        : featureImages,
+  };
+});
+const landingPage = await getEntry("pages", "landing-page");
+const { pageTitle } = landingPage.data;
+---
+
+<Layout title={`Highlights – ${pageTitle}`} h1="Highlights">
+  <section class="mx-auto mb-24 mt-8 max-w-screen-2xl">
+    <h1 class="text-center text-xl sm:text-2xl">Highlights</h1>
+    <ul
+      class="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 xl:gap-x-8"
+    >
+      {
+        allFeaturesWithImages.map((feature, index: number) => (
+          <li class="feature-card group relative overflow-hidden">
+            <a
+              href={`/highlights/${feature.slug}`}
+              class="absolute inset-0 z-10 flex items-center justify-center bg-black/40 p-4 text-white"
+            >
+              <p class="text-2xl font-semibold">{feature.data.title}</p>
+            </a>
+            <Photo
+              enableLightbox={true}
+              src={feature.heroImage || feature.images?.[0]?.image}
+              alt=""
+              priority={index < 2}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              class="aspect-square object-cover transition-all duration-300 group-hover:scale-[1.02]"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>

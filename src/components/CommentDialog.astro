@@ -1,0 +1,196 @@
+---
+interface Props {
+  rollSlug: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  comments?: any;
+  showComments?: boolean;
+}
+
+import Sheet from "./Sheet.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+const { rollSlug } = Astro.props as Props;
+---
+
+<div class="space-y-8">
+  <Sheet id="comment-dialog" title={t("component.commentDialog.title")}>
+    <form id="comment-form" class="space-y-4">
+      <!-- Comment Form -->
+      <div id="form-content">
+        <div>
+          <label for="author" class="mb-1 block text-sm font-medium"
+            >{t("component.commentDialog.name")}</label
+          >
+          <input
+            type="text"
+            id="author"
+            autocomplete="name"
+            name="author"
+            required
+            class=""
+          />
+        </div>
+
+        <div class="mt-4">
+          <label for="email" class="mb-1 block text-sm font-medium"
+            >{t("component.commentDialog.email")}</label
+          >
+          <input
+            type="email"
+            id="email"
+            autocomplete="email"
+            name="email"
+            required
+          />
+        </div>
+
+        <div class="mt-4">
+          <label for="content" class="mb-1 block text-sm font-medium"
+            >{t("component.commentDialog.comment")}</label
+          >
+          <textarea id="content" name="content" required rows="4"></textarea>
+        </div>
+        <input type="hidden" id="rollSlug" name="rollSlug" value={rollSlug} />
+
+        <div class="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
+            id="cancel-comment-dialog"
+            class="rounded-md border px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            {t("component.commentDialog.cancel")}
+          </button>
+          <button
+            type="submit"
+            class="rounded-md bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+          >
+            {t("component.commentDialog.submit")}
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Message -->
+      <div id="feedback-content" class="hidden space-y-4">
+        <div id="feedback-message" class="text-center"></div>
+        <div class="flex justify-center gap-2">
+          <button
+            type="button"
+            id="try-again-button"
+            class="hidden rounded-md border px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            {t("component.commentDialog.tryAgain")}
+          </button>
+          <button
+            type="button"
+            id="dismiss-button"
+            class="hidden rounded-md bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+          >
+            {t("component.commentDialog.dismiss")}
+          </button>
+        </div>
+      </div>
+    </form>
+  </Sheet>
+</div>
+
+<script>
+  import { setupDialog } from "../lib/dialog-utils";
+  import { translations } from "../i18n/utils";
+
+  const t = (key: keyof typeof translations.en) => translations.en[key];
+
+  const dialog = setupDialog("comment-dialog");
+  const openButton = document.querySelector("#open-comment-dialog");
+  const cancelButton = document.querySelector("#cancel-comment-dialog");
+  const form = document.querySelector("#comment-form") as HTMLFormElement;
+  const formContent = document.querySelector("#form-content");
+  const feedbackContent = document.querySelector("#feedback-content");
+  const feedbackMessage = document.querySelector("#feedback-message");
+  const tryAgainButton = document.querySelector("#try-again-button");
+  const dismissButton = document.querySelector("#dismiss-button");
+
+  function showForm() {
+    if (formContent && feedbackContent) {
+      formContent.classList.remove("hidden");
+      feedbackContent.classList.add("hidden");
+    }
+  }
+
+  function showFeedback(message: string, isError: boolean) {
+    if (
+      formContent &&
+      feedbackContent &&
+      feedbackMessage &&
+      tryAgainButton &&
+      dismissButton
+    ) {
+      formContent.classList.add("hidden");
+      feedbackContent.classList.remove("hidden");
+      feedbackMessage.innerHTML = message;
+
+      if (isError) {
+        feedbackMessage.classList.add("text-red-600");
+        tryAgainButton.classList.remove("hidden");
+        dismissButton.classList.add("hidden");
+      } else {
+        feedbackMessage.classList.remove("text-red-600");
+        tryAgainButton.classList.add("hidden");
+        dismissButton.classList.remove("hidden");
+      }
+    }
+  }
+
+  openButton?.addEventListener("click", () => {
+    showForm();
+    dialog?.showModal();
+  });
+
+  cancelButton?.addEventListener("click", () => {
+    dialog?.close();
+  });
+
+  tryAgainButton?.addEventListener("click", () => {
+    showForm();
+  });
+
+  dismissButton?.addEventListener("click", () => {
+    dialog?.close();
+    form.reset();
+  });
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+
+    try {
+      const response = await fetch("/.netlify/functions/submit-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showFeedback(
+          `<p>${t("component.commentDialog.success")}</p>
+           <p class="mt-2 text-sm">${t("component.commentDialog.successDetail")}</p>
+           ${result.pullRequestUrl ? `<p class="mt-4 text-xs"><a href="${result.pullRequestUrl}" target="_blank" class="underline">${t("component.commentDialog.viewOnGithub")}</a></p>` : ""}`,
+          false
+        );
+      } else {
+        throw new Error(result.error || "Failed to submit comment");
+      }
+    } catch (error) {
+      showFeedback(
+        `<p>${t("component.commentDialog.error")}</p>
+         <p class="mt-2 text-sm">${error}</p>`,
+        true
+      );
+    }
+  });
+</script>

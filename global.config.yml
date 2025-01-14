@@ -1,0 +1,81 @@
+## Change this file to configure the website to your needs.
+## Remember to also configure the Astro config file
+
+## Preferences
+
+default_lang: "en" # Currently only "en" is supported. Remember to also set this in astro.config.mjs
+
+latest_rolls_count: 6 # How many latest rolls to show on start page. 0 to hide.
+
+enable_likes: "off" # If the user should be able to add likes to rolls. "on" or "off"
+enable_comments: "off" # Enable visitor comments. Only works when hosted on Netlify and requires a GITHUB_TOKEN with write access. "on" or "off"
+
+theme_switch: "on" # If the user should be able to switch between light and dark mode. "on" or "off"
+default_theme: "auto" # The default theme. "light", "dark" or "auto" Note: There is currently a bug with all other settings than "auto"
+default_grid: "normal" # The default grid size. "normal" or "compact"
+
+default_lightbox: "fullscreen" # The default lightbox mode. "fullscreen" or "normal"
+
+## Personal information
+name: "Your name"
+email: "your@email.com"
+instagram: "your_instagram_handle"
+flickr: "your_flickr_handle"
+facebook: "your_facebook_handle" # Not the full URL, just the username e.g. "firstname.surname"
+
+## Your list of featured collections. These will be used in the CMS interface for highlighting photos.
+features:
+  - "Street"
+
+## Your list of cameras, lenses and films. Will be used in the CMS interface when adding a new roll.
+## You need to run `node setup.js` after making changes here in order to update the CMS.
+cameras35mm: 
+  - "Leica M6"
+  - "Olympus XA2"
+  - "Minolta 7000"
+  - "Pentax ME"
+  - "Cosina Voigtländer Bessa R"
+  - "Zorki 4K"
+  - "Pentax MX"
+
+camerasMediumFormat:
+  - "Hasselblad 500CM"
+  - "Minolta Autocord"
+
+lenses:
+  - "M-Rokkor 40mm f/2"
+  - "Elmar-C 90mm f/4"
+  - "Planar CF 80mm f/2.8"
+  - "Rokkor 75mm f/3.5"
+  - "Color-Skopar 35mm f/2.5"
+  - "Jupiter-8 50mm f/2"
+  - "Nokton SC 40mm f/1.4"
+  - "Pentax-M 200mm f/4"
+  - "Pentax-M 50mm f/1.7"
+  - "Minolta AF 50mm f/1.7"
+
+black_and_white_films:
+  - "Ilford HP5 Plus"
+  - "Ilford FP4"
+  - "Ilford Delta 100"
+  - "Ilford Delta 400"
+  - "Rollei Retro 80S"
+  - "Fomapan 100"
+  - "Fomapan 200"
+  - "Fomapan 400"
+
+color_films:
+  - "Kodak Portra 400"
+  - "Kodak Portra 160"
+  - "Kodak Gold 200"
+  - "Fujicolor C200"
+  - "Fujicolor Superia X-tra 400"
+  - "Fujicolor Superia 200"
+  - "Kodak Provia 100F"
+  - "Kodak Provia 400F"
+  - "Fujicolor Pro 400H"
+
+## Your list of custom tags for filtering rolls.
+custom_tags:
+  - "Favorite"
+  - "Development fail"

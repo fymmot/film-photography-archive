@@ -1,0 +1,3017 @@
+{
+  "contentTypes": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "bookReferencePage",
+        "type": "ContentType",
+        "createdAt": "2023-10-02T15:52:39.304Z",
+        "updatedAt": "2023-10-02T15:57:37.345Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:37.345Z",
+        "firstPublishedAt": "2023-10-02T15:52:39.723Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "displayField": "title",
+      "name": "Book",
+      "description": "Book reference page",
+      "fields": [
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "publicationDate",
+          "name": "Publication Date",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "isbn",
+          "name": "ISBN",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "description",
+          "name": "Description",
+          "type": "RichText",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "enabledNodeTypes": [
+                "heading-1",
+                "heading-2",
+                "heading-3",
+                "heading-4",
+                "heading-5",
+                "heading-6",
+                "ordered-list",
+                "unordered-list",
+                "hr",
+                "blockquote",
+                "embedded-entry-block",
+                "embedded-asset-block",
+                "hyperlink",
+                "entry-hyperlink",
+                "asset-hyperlink",
+                "embedded-entry-inline"
+              ],
+              "message": "Only heading 1, heading 2, heading 3, heading 4, heading 5, heading 6, ordered list, unordered list, horizontal rule, quote, block entry, asset, link to Url, link to entry, link to asset, and inline entry nodes are allowed"
+            },
+            {
+              "enabledMarks": [
+                "bold",
+                "italic",
+                "underline",
+                "code"
+              ],
+              "message": "Only bold, italic, underline, and code marks are allowed"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "coverImage",
+          "name": "Cover Image",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "author",
+          "name": "Author",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "bookAuthor"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "bookAuthor",
+        "type": "ContentType",
+        "createdAt": "2023-10-02T15:52:39.333Z",
+        "updatedAt": "2023-10-02T15:57:37.877Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:37.877Z",
+        "firstPublishedAt": "2023-10-02T15:52:40.219Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "displayField": "name",
+      "name": "Author",
+      "description": "author of book",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "bio",
+          "name": "Bio",
+          "type": "RichText",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "enabledNodeTypes": [
+                "heading-1",
+                "heading-2",
+                "heading-3",
+                "heading-4",
+                "heading-5",
+                "heading-6",
+                "ordered-list",
+                "unordered-list",
+                "hr",
+                "blockquote",
+                "embedded-entry-block",
+                "embedded-asset-block",
+                "hyperlink",
+                "entry-hyperlink",
+                "asset-hyperlink",
+                "embedded-entry-inline"
+              ],
+              "message": "Only heading 1, heading 2, heading 3, heading 4, heading 5, heading 6, ordered list, unordered list, horizontal rule, quote, block entry, asset, link to Url, link to entry, link to asset, and inline entry nodes are allowed"
+            },
+            {
+              "enabledMarks": [
+                "bold",
+                "italic",
+                "underline",
+                "code"
+              ],
+              "message": "Only bold, italic, underline, and code marks are allowed"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "avatar",
+          "name": "Avatar",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        }
+      ]
+    }
+  ],
+  "tags": [
+  ],
+  "editorInterfaces": [
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "1yy9zkhd77sl",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 6,
+        "createdAt": "2023-10-02T15:52:39.920Z",
+        "createdBy": {
+          "sys": {
+            "id": "08LcM38OAVfUmJY7a18Nr9",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2023-10-02T15:57:38.896Z",
+        "updatedBy": {
+          "sys": {
+            "id": "08LcM38OAVfUmJY7a18Nr9",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "bookReferencePage",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "publicationDate",
+          "widgetId": "datePicker",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "isbn",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "description",
+          "widgetId": "richTextEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "coverImage",
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "author",
+          "widgetId": "entryLinkEditor",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "1yy9zkhd77sl",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 6,
+        "createdAt": "2023-10-02T15:52:40.404Z",
+        "createdBy": {
+          "sys": {
+            "id": "08LcM38OAVfUmJY7a18Nr9",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2023-10-02T15:57:38.886Z",
+        "updatedBy": {
+          "sys": {
+            "id": "08LcM38OAVfUmJY7a18Nr9",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "bookAuthor",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "name",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "bio",
+          "widgetId": "richTextEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "avatar",
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "5LGKtDMoIkoQxqyZt6qXY7",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.112Z",
+        "updatedAt": "2023-10-02T15:57:52.690Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:52.690Z",
+        "firstPublishedAt": "2023-10-02T15:52:54.744Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookReferencePage"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Celestial Love"
+        },
+        "publicationDate": {
+          "en-US": "2016-03-18T00:00+02:00"
+        },
+        "isbn": {
+          "en-US": "23847ljkjl1234k134"
+        },
+        "description": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Do you ever find yourself yearning for a love story that transcends the boundaries of our earthly existence? Are you drawn to the mystique and wonder of the stars, craving a taste of romance amidst the vastness of the universe? Look no further, for \"Celestial Love\" is the celestial-inspired book that will sweep you off your feet and take you on an otherworldly journey of love and connection.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In this captivating tale, Alex masterfully combines the awe-inspiring backdrop of swirling galaxies and ethereal nebulae with themes of love, sacrifice, and the inherent interconnectivity of the universe. Prepare to be transported to a realm where love knows no bounds and cosmic forces conspire to bring together soulmates across galaxies.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "As you dive into the pages of \"Celestial Love,\" you'll be greeted by a diverse cast of characters, each with their own desires, ambitions, and insecurities. Through their intertwining stories, the book illuminates the power of human connection and the profound impact it can have on the fabric of the universe itself.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Within the pages of \"Celestial Love,\" you'll witness a love that defies logic and transcends time. As celestial bodies align and nebulae dance across the cosmos, the characters embark on a journey of self-discovery and unyielding devotion. Prepare to be swept away by the passion and intensity of their emotions as they navigate the cosmic dance of love and sacrifice.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But this isn't just a love story set against the backdrop of the stars. \"Celestial Love\" delves deep into the metaphysical, exploring the very threads that weave us all together. As the characters navigate their own love stories, they come to realize that their connections are not just a matter of chance, but are rather an integral part of the grand tapestry of the universe.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "For those seeking a taste of romance within the vast expanse of outer space, \"Celestial Love\" is a must-read. With its enthralling blend of awe-inspiring cosmic imagery and deeply felt emotions, this book will capture your heart and leave you yearning for a love that reaches beyond the confines of our world.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "So, fasten your seatbelts, dear readers, and get ready to embark on a cosmic adventure unlike any other. Let \"Celestial Love\" take you on a journey through the stars and show you that love truly knows no boundaries, not even those of the universe itself.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "coverImage": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "1KTlyw98HvqEkjA2qYGikG"
+            }
+          }
+        },
+        "author": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "19AMZU7WMUFqR5ZhJ3A3Ij"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "19AMZU7WMUFqR5ZhJ3A3Ij",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.114Z",
+        "updatedAt": "2023-10-02T15:57:50.444Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:50.444Z",
+        "firstPublishedAt": "2023-10-02T15:52:52.236Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookAuthor"
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "en-US": "Alex Astrum"
+        },
+        "bio": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "As a science fiction enthusiast and space lover, I am always on the lookout for new and exciting authors who merge the wonders of astronomy with the limitless possibilities of storytelling. Today, I am thrilled to introduce you to a fictional author who has taken the literary world by storm with their captivating science fiction books centered around astronomy.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Meet Alex Astrum, the mastermind behind a collection of spellbinding novels that transport readers to the deepest reaches of outer space. With a deep passion for astronomy and a vivid imagination, Alex has brought the stars down to Earth and woven them into captivating tales that will leave you mesmerized.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "One of Alex's most popular works is \"Galactic Odyssey,\" a mesmerizing journey through the cosmos that introduces readers to a universe teeming with intergalactic adventures. From distant planets to alien civilizations, this thrilling tale takes you on a rollercoaster of emotions, combining intense action with thought-provoking insights into the mysteries of the universe.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But Alex's genius doesn't stop there. In \"Stellar Reverie,\" readers are plunged into a world where dreams and realities merge. With breathtaking descriptions of celestial wonders, this novel explores the depths of human imagination, blurring the lines between science and fantasy.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "For those who crave a dash of romance amidst the stars, \"Celestial Love\" will capture your heart. Set against a backdrop of swirling galaxies and ethereal nebulae, this enchanting story weaves together cosmic elements with themes of love, sacrifice, and the inherent interconnectivity of the universe.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "With each page, Alex Astrum's prose carries readers on an exploration of astronomical wonders, transforming complex scientific concepts into accessible, awe-inspiring adventures. The author's meticulous research and commitment to accuracy shine through in their vivid depictions of celestial bodies, making each scene feel palpable and real.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Alex Astrum's meteoric rise in the literary world can be attributed to their ability to captivate readers, blending science fiction with a deep appreciation for astronomy. Their novels transport us to outer space, allowing us to escape the confines of our daily lives and embark on thrilling journeys through the cosmos.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "So, if you're a fan of science fiction and find yourself gazing up at the night sky with wonder, it's time to dive into the world of Alex Astrum. Allow their words to transport you to a universe where anything is possible, where the mysteries of the cosmos collide with the limitless depths of human imagination.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "avatar": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "68jMAXZmPifTKdo5vK3qE9"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "53BanYXgytuFf1PqNphiEW",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.119Z",
+        "updatedAt": "2023-10-02T15:57:51.557Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:51.557Z",
+        "firstPublishedAt": "2023-10-02T15:52:53.353Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookReferencePage"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Galactic Odyssey"
+        },
+        "publicationDate": {
+          "en-US": "2009-09-15T00:00+02:00"
+        },
+        "isbn": {
+          "en-US": "479238745lkj243234"
+        },
+        "description": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Embark on a mesmerizing journey through the boundless cosmos with \"Galactic Odyssey,\" a science fiction masterpiece that will transport readers to a universe teeming with intergalactic adventures. From the very first page, this captivating novel immerses you in a world that defies imagination, filled with distant planets, alien civilizations, and extraordinary discoveries.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "\"Galactic Odyssey\" weaves an intricate tapestry of storytelling, blending intense action with profound insights into the mysteries of the universe. Join our protagonists as they traverse vast cosmic landscapes, encountering captivating and bizarre alien species along the way. Each encounter brings a unique flavor to the narrative, showcasing the author's remarkable creativity.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "As the plot unfolds, readers will find themselves on the edge of their seats, gripped by the thrilling action sequences that propel the story forward. From heart-pounding space battles to daring escapes from treacherous planets, \"Galactic Odyssey\" delivers on its promise of non-stop excitement. The vivid descriptions and skillful writing will make you feel like you are right there, experiencing every pulse-pounding moment alongside the characters.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But \"Galactic Odyssey\" goes beyond mere entertainment. It delves into the mind-bending concepts of space-time, the unfathomable vastness of the cosmos, and the profound questions that lie at the heart of our existence. Through thought-provoking insights scattered throughout the narrative, readers will be prompted to ponder the great mysteries of the universe, challenging their perceptions of reality and sparking a thirst for knowledge about the outer reaches of space.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Alongside the dazzling adventure and intellectual stimulation, \"Galactic Odyssey\" also boasts a rich cast of characters that will capture your heart. From the larger-than-life heroes to the enigmatic villains, each character is carefully developed, adding depth and complexity to the narrative. You will find yourself emotionally invested in their triumphs and struggles, rooting for their success.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In summary, \"Galactic Odyssey\" is a sci-fi novel like no other. With its mesmerizing journey through the cosmos, it captivates readers with its blend of thrilling action, thought-provoking insights, and unforgettable characters. No matter your age or background, this book will transport you to a galaxy far, far away and leave you longing for more. So strap in and get ready for an exhilarating adventure into the unknown with \"Galactic Odyssey.\"",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "coverImage": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3wxk9BJCeSPKlFwr4aAYR6"
+            }
+          }
+        },
+        "author": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "19AMZU7WMUFqR5ZhJ3A3Ij"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "15SmqTKa1vEex831b1emd0",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.121Z",
+        "updatedAt": "2023-10-02T15:57:53.271Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:53.271Z",
+        "firstPublishedAt": "2023-10-02T15:52:55.344Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookReferencePage"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Stellar Odyssey"
+        },
+        "publicationDate": {
+          "en-US": "2009-09-30T00:00+02:00"
+        },
+        "isbn": {
+          "en-US": "234234lkjklj245445"
+        },
+        "description": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In a vast and boundless universe, where celestial bodies dance and galactic societies thrive, a captivating space opera unfolds. Prepare to embark on a thrilling journey through the cosmos with \"Stellar Odyssey,\" an epic tale that will transport you to the outer reaches of the imagination.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Set in a future where space travel is a common occurrence, \"Stellar Odyssey\" follows a diverse and ragtag crew of explorers as they navigate the treacherous voids of deep space. Led by a charismatic captain, each member of the crew brings their own unique skills, secrets, and motivations, creating a dynamic and unpredictable dynamic that keeps readers on the edge of their seats.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "One of the standout features of this remarkable book is its meticulous attention to detail. The author's extensive research into celestial bodies and astronomical phenomena is evident as they paint vivid and awe-inspiring descriptions of distant planets, shimmering nebulas, and enigmatic black holes. From the icy plains of Triton to the bustling metropolis orbiting Alpha Centauri, every setting pulsates with a sense of grandeur and realism.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But \"Stellar Odyssey\" offers more than just awe-inspiring visuals. It delves into the intricate dynamics of galactic societies, from the political maneuverings of rival empires to the complex social hierarchies of thriving space colonies. Through skillful storytelling and captivating character development, the book explores the consequences of power, the limits of loyalty, and the resilience of the human spirit, all set against a backdrop of unexplored galaxies.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Readers are sure to be engrossed in the action-packed narrative as the crew faces various challenges and encounters both exhilarating discoveries and perilous threats. From exhilarating space battles to heart-pounding encounters with ancient alien civilizations, \"Stellar Odyssey\" never fails to deliver pulse-pounding excitement.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Whether you are a seasoned fan of science fiction or a newcomer to the genre, \"Stellar Odyssey\" is a must-read for anyone who yearns for adventure in the infinite expanse of space. This captivating space opera will ignite your imagination, satisfy your thirst for cosmic wonders, and leave you eagerly anticipating the next installment in this thrilling series.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Prepare to be dazzled by the rich tapestry of cosmic wonders and intricate storytelling that awaits you in \"Stellar Odyssey.\" Join the crew, embark on this breathtaking adventure, and be transported to a universe where anything is possible.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "coverImage": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "5vcJoIgMLg66ePdZzCxbkc"
+            }
+          }
+        },
+        "author": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "hczPJsIZ133B7Woksilvz"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "6iYkSpq1w071sJOJZdcLrS",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.122Z",
+        "updatedAt": "2023-10-02T15:57:52.124Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:52.124Z",
+        "firstPublishedAt": "2023-10-02T15:52:54.006Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookReferencePage"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Stellar Reverie"
+        },
+        "publicationDate": {
+          "en-US": "2006-06-15T00:00+02:00"
+        },
+        "isbn": {
+          "en-US": "sdfa9834asdf243454"
+        },
+        "description": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In the vast expanse of the universe, there lies a realm where dreams and reality intertwine. \"Stellar Reverie\" takes readers on an extraordinary journey, immersing them in a world where the boundaries of imagination are shattered. With its captivating narrative and mesmerizing descriptions of celestial wonders, this novel transcends the realms of science and fantasy.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "From the very first page, \"Stellar Reverie\" transports readers to a distant galaxy, where star systems twinkle like diamonds in the cosmic void. The author's skillful prose paints vivid pictures of celestial bodies, narrating their breathtaking beauty and captivating allure. Moons orbiting alien planets, nebulae swirling with vibrant colors, and swirling galaxies become the backdrop against which the story unfolds.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But this book offers so much more than stunning visuals. Its core lies within the exploration of human imagination and the power of dreams. As the characters navigate through this otherworldly landscape, they discover that boundaries between the real and the imagined are not as clear-cut as they once believed. The novel masterfully blurs the lines between science and fantasy, challenging readers to ponder what lies beyond the constraints of our rational understanding.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Each page of \"Stellar Reverie\" is filled with awe-inspiring encounters and profound moments of self-discovery. The characters, compelled by their shared fascination with the unknown vastness of space, embark on a journey where their inner desires and deepest fears are laid bare. In this exploration of the human psyche, readers are invited to reflect upon their own dreams and aspirations, to question the limitations of their perception.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "The author's exquisite attention to detail effortlessly brings the story to life. From the intricate descriptions of alien landscapes to the nuanced emotions of the characters, every aspect of \"Stellar Reverie\" is meticulously crafted. The prose flows like stardust, carrying readers on a transcendental adventure filled with wonder and introspection.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "For those who revel in the magic of science fiction and the mysteries of the cosmos, \"Stellar Reverie\" is a literary gem that should not be missed. It is a book that embraces the vastness of the universe, encapsulating the awe and fascination that astronomy and outer space inspire. Through its weaving of dreams and realities, this novel challenges us to push beyond the boundaries of our understanding and explore the infinite possibilities that lie beyond.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In \"Stellar Reverie,\" the line between the extraordinary and the ordinary blurs, leaving readers with a sense of wonder and a newfound appreciation for the vastness of the cosmos. Journey through the stars, immerse yourself in the depths of human imagination, and discover a world where dreams and realities merge in this extraordinary science fiction masterpiece.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "coverImage": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "wOKVSGsEmWHPjH0spWvA8"
+            }
+          }
+        },
+        "author": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "19AMZU7WMUFqR5ZhJ3A3Ij"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "hczPJsIZ133B7Woksilvz",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.133Z",
+        "updatedAt": "2023-10-02T15:57:51.011Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:51.011Z",
+        "firstPublishedAt": "2023-10-02T15:52:52.797Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookAuthor"
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "en-US": "Evelyn Stardrift"
+        },
+        "bio": {
+          "en-US": {
+            "nodeType": "document",
+            "data": {
+            },
+            "content": [
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "In the vast realm of science fiction literature, there exists a celestial haven where astronomy and imagination collide. Within this enchanted world, one author reigns supreme, captivating readers with tantalizing tales set in the far reaches of outer space. Meet our featured science fiction maestro: a brilliant wordsmith who weaves captivating narratives, igniting our sense of wonder and exploration.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "A visionary in the genre, this author has mastered the art of blending the wonders of astronomy with spellbinding storytelling. Their vast catalog of books takes readers on exhilarating journeys through galaxies, offering a glimpse into the mysteries that lie beyond our own solar system.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "In the author's imaginings, spaceships ply the interstellar highways, traversing distant planets and encountering peculiar lifeforms. Their stories seamlessly integrate elements of astrophysics and cosmic phenomena, enveloping readers in a rich tapestry of scientific accuracy and fantastical adventure.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Through their novels, this author effortlessly transports readers to alien worlds, painted with vivid landscapes and bustling civilizations. Whether it's exploring an exoplanet teeming with alien life or unraveling the enigma of a far-flung nebula, each page is a testament to their deep knowledge of astronomy and their boundless creativity.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "One of their most acclaimed works is \"Stellar Odyssey,\" an epic space opera that follows a ragtag crew of explorers as they navigate the treacherous voids of deep space. The meticulously researched descriptions of celestial bodies and the intricate dynamics of galactic societies lend an air of authenticity to this breathtaking adventure.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Another standout from this author's impressive repertoire is \"Celestial Chronicles,\" a series that chronicles the exploits of an intrepid astronaut who discovers an ancient artifact that unlocks the secrets of the universe. Blending elements of mystery, action, and cosmic wonder, each installment leaves readers spellbound, eagerly anticipating the next interstellar escapade.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              },
+              {
+                "nodeType": "paragraph",
+                "data": {
+                },
+                "content": [
+                  {
+                    "nodeType": "text",
+                    "value": "Beyond their literary creations, this author's impact resonates deeply with fans and enthusiasts alike. Their works inspire a sense of curiosity and awe, rekindling our fascination with the vastness of the cosmos. Readers find solace in the notion that within the pages of these books, they can journey to the stars and explore the uncharted depths of space without ever leaving their armchair.",
+                    "marks": [
+                    ],
+                    "data": {
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "avatar": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "Lnt466LPysmqPDnTaj9CP"
+            }
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "4SVjB3qnqABOf4d3XQoKW6",
+        "type": "Entry",
+        "createdAt": "2023-10-02T15:52:51.796Z",
+        "updatedAt": "2023-10-02T15:57:53.809Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 5,
+        "publishedAt": "2023-10-02T15:57:53.809Z",
+        "firstPublishedAt": "2023-10-02T15:52:55.902Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "automationTags": [
+        ],
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "bookReferencePage"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Celestial Chronicles"
+        },
+        "publicationDate": {
+          "en-US": "1961-09-04T00:00+02:00"
+        },
+        "isbn": {
+          "en-US": "234qcele34234df343"
+        },
+        "description": {
+          "en-US": {
+            "data": {
+            },
+            "content": [
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "In the vast expanse of the galaxy, where stars twinkle and planets loom, lies a series that will take you on a thrilling journey through the cosmos. Welcome to the Celestial Chronicles, an awe-inspiring collection of books that combine the realms of science fiction and astronomy, capturing the imaginations of readers who yearn for adventure beyond our earthly confines.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "At the heart of this extraordinary series is an intrepid astronaut, whose courage and curiosity propel them into one mind-bending escapade after another. In their quest for knowledge and understanding, they stumble upon an ancient artifact – a key to unlocking the secrets of the universe. This discovery becomes a gateway to unexplored realms, unveiling cosmic wonders and mysteries that both captivate and bewilder.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Each installment of the Celestial Chronicles is a masterful blend of mystery, action, and cosmic fascination. From the very first page, readers are spellbound by the richly textured worlds crafted by the talented author. Whether delving into the depths of a distant nebula or navigating treacherous asteroid belts, the protagonist's journey is brimming with excitement and danger at every turn.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "But it's not just the action that sets this series apart. The Celestial Chronicles has a remarkable ability to seamlessly interweave scientific concepts and astronomical principles into its narrative. With meticulous attention to detail, the author entwines intriguing threads of real-world space exploration, bending and twisting them to fit the contours of their imaginative universe. From interstellar travel to alien life forms, this series ignites a sense of wonder within its readers, encouraging them to explore the mysteries of the cosmos alongside the protagonist.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "Readers who delve into the Celestial Chronicles may find themselves contemplating the nature of existence, the wonders of the universe, and the limitless possibilities that lie beyond our comprehension. Through exhilarating encounters with celestial phenomena and encounters with extraterrestrial life, this series invites its audience to envision what lies beyond the confines of our planet.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "As each installment of the Celestial Chronicles concludes, readers are left hungry for more – eagerly anticipating the next interstellar escapade. With each turn of the page, this extraordinary series beckons us to remember that the universe is not just a backdrop for our stories, but a boundless playground of endless possibilities.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              },
+              {
+                "data": {
+                },
+                "content": [
+                  {
+                    "data": {
+                    },
+                    "marks": [
+                    ],
+                    "value": "If you crave stories that blend the awe-inspiring wonders of space with the thrill of adventure, then the Celestial Chronicles is a series that will undoubtedly ignite your imagination. Journey into the depths of the galaxy, uncover the secrets of the universe, and embark on an interstellar voyage like no other. Welcome to a world where science fiction and astronomy collide, where galaxies are not just distant spectacles but windows into infinite possibilities. Welcome to the Celestial Chronicles.",
+                    "nodeType": "text"
+                  }
+                ],
+                "nodeType": "paragraph"
+              }
+            ],
+            "nodeType": "document"
+          }
+        },
+        "coverImage": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "5a0f5lPumz4CGX5UDCWBmu"
+            }
+          }
+        },
+        "author": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "hczPJsIZ133B7Woksilvz"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "assets": [
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "Lnt466LPysmqPDnTaj9CP",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.453Z",
+        "updatedAt": "2023-10-02T15:57:46.759Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:46.759Z",
+        "firstPublishedAt": "2023-10-02T15:52:48.444Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Evelyn Stardrift"
+        },
+        "description": {
+          "en-US": "Headshot image of Evelyn Stardrift generated by Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/Lnt466LPysmqPDnTaj9CP/cb551edbe6cb96ccff5370ae201ac880/DALL_E_2023-09-22_14.31.13_-_Create_an_headshot_image_of_a_female_science_fiction_author._The_image_should_be_real_and_the_b.png",
+            "details": {
+              "size": 1818606,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 14.31.13 - Create an headshot image of a female science fiction author. The image should be real and the background should contain something related to outer spa.png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "68jMAXZmPifTKdo5vK3qE9",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.476Z",
+        "updatedAt": "2023-10-02T15:57:46.304Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:46.304Z",
+        "firstPublishedAt": "2023-10-02T15:52:47.860Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Headshot of Alex Astrum"
+        },
+        "description": {
+          "en-US": "Headshot image of Alex Astrum generated using Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/68jMAXZmPifTKdo5vK3qE9/15a0b5d02042fa1b174ba9816bced097/DALL_E_2023-09-22_14.30.45_-_Create_an_headshot_image_of_a_science_fiction_author._The_image_should_be_real_and_the_backgrou.png",
+            "details": {
+              "size": 1785847,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 14.30.45 - Create an headshot image of a science fiction author. The image should be real and the background should contain something related to outer space.png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "wOKVSGsEmWHPjH0spWvA8",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.726Z",
+        "updatedAt": "2023-10-02T15:57:47.248Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:47.248Z",
+        "firstPublishedAt": "2023-10-02T15:52:48.791Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Book cover of Stellar Reverie"
+        },
+        "description": {
+          "en-US": "Book cover of Stellar Reverie generated using Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/wOKVSGsEmWHPjH0spWvA8/965d7522f7d1bf4527c775f6513b665e/DALL_E_2023-09-22_15.01.44_-_Book_cover_for_the_english_science_fiction_novel._The_title_of_the_novel_is__Stellar_Reverie_._.png",
+            "details": {
+              "size": 1702472,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 15.01.44 - Book cover for the english science fiction novel. The title of the novel is _Stellar Reverie_. The book is written by Alex Astrum..png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "5vcJoIgMLg66ePdZzCxbkc",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.728Z",
+        "updatedAt": "2023-10-02T15:57:48.564Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:48.564Z",
+        "firstPublishedAt": "2023-10-02T15:52:50.128Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Book cover of Stellar Odyssey"
+        },
+        "description": {
+          "en-US": "Book cover of Stellar Odyssey generated with Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/5vcJoIgMLg66ePdZzCxbkc/e285b935492c49ad3268ee1fc7bb48d9/DALL_E_2023-09-22_15.19.08_-_Book_cover_for_the_english_science_fiction_novel._The_title_of_the_novel_is__Stellar_Odyssey_._.png",
+            "details": {
+              "size": 1581620,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 15.19.08 - Book cover for the english science fiction novel. The title of the novel is _Stellar Odyssey_. The novel is written by Evelyn Stardrift..png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "1KTlyw98HvqEkjA2qYGikG",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.738Z",
+        "updatedAt": "2023-10-02T15:57:48.181Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:48.181Z",
+        "firstPublishedAt": "2023-10-02T15:52:49.776Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Book cover of Celestial Love"
+        },
+        "description": {
+          "en-US": "Book cover of Celestial Love generated with Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/1KTlyw98HvqEkjA2qYGikG/9b0754310e41714e17ef4675130dc3e3/DALL_E_2023-09-22_15.08.58_-_Book_cover_for_the_english_science_fiction_novel._The_title_of_the_novel_is__Celestial_Love_._T.png",
+            "details": {
+              "size": 1846929,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 15.08.58 - Book cover for the english science fiction novel. The title of the novel is _Celestial Love_. The novel is written by Alex Astrum..png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "3wxk9BJCeSPKlFwr4aAYR6",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.748Z",
+        "updatedAt": "2023-10-02T15:57:47.706Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:47.706Z",
+        "firstPublishedAt": "2023-10-02T15:52:49.205Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Book cover of Galactic Odyssey"
+        },
+        "description": {
+          "en-US": "Book cover of Galactic Odyssey generated with Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/3wxk9BJCeSPKlFwr4aAYR6/612f3326c063bf84c367503a1822f62b/DALL_E_2023-09-22_15.04.50_-_Book_cover_for_the_english_science_fiction_novel._The_title_of_the_novel_is__Galactic_Odyssey_..png",
+            "details": {
+              "size": 1914163,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 15.04.50 - Book cover for the english science fiction novel. The title of the novel is _Galactic Odyssey_. The novel is written by Alex Astrum..png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    },
+    {
+      "metadata": {
+        "tags": [
+        ]
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "id": "5a0f5lPumz4CGX5UDCWBmu",
+        "type": "Asset",
+        "createdAt": "2023-10-02T15:52:41.748Z",
+        "updatedAt": "2023-10-02T15:57:48.935Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 8,
+        "publishedAt": "2023-10-02T15:57:48.935Z",
+        "firstPublishedAt": "2023-10-02T15:52:50.587Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 9,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Book cover of Celestial Chronicles"
+        },
+        "description": {
+          "en-US": "Book cover of Celestial Chronicles generated with Dall-E"
+        },
+        "file": {
+          "en-US": {
+            "url": "//images.ctfassets.net/1yy9zkhd77sl/5a0f5lPumz4CGX5UDCWBmu/6bf0aeacc6ec99403c8340e880aeefb2/DALL_E_2023-09-22_15.23.12_-_Book_cover_for_the_english_science_fiction_novel._The_title_of_the_novel_is__Celestial_Chronicl.png",
+            "details": {
+              "size": 1844713,
+              "image": {
+                "width": 1024,
+                "height": 1024
+              }
+            },
+            "fileName": "DALL·E 2023-09-22 15.23.12 - Book cover for the english science fiction novel. The title of the novel is _Celestial Chronicles_. The novel is written by Evelyn Stardrift. The imag.png",
+            "contentType": "image/png"
+          }
+        }
+      }
+    }
+  ],
+  "locales": [
+    {
+      "name": "English (United States)",
+      "code": "en-US",
+      "fallbackCode": null,
+      "default": true,
+      "contentManagementApi": true,
+      "contentDeliveryApi": true,
+      "optional": false,
+      "sys": {
+        "type": "Locale",
+        "id": "7dCCusiHeaJviuxC9CpKzL",
+        "version": 1,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master",
+            "uuid": "63da1654-fc0a-4296-8ba6-4509183cbbe1"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "createdAt": "2023-10-02T15:47:33Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedAt": "2023-10-02T15:47:33Z"
+      }
+    }
+  ],
+  "webhooks": [
+  ],
+  "roles": [
+    {
+      "name": "Author",
+      "description": "Allows editing of content",
+      "policies": [
+        {
+          "effect": "allow",
+          "actions": [
+            "create"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "create"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "permissions": {
+        "ContentModel": [
+          "read"
+        ],
+        "Settings": [
+        ],
+        "ContentDelivery": [
+        ],
+        "Environments": [
+        ],
+        "EnvironmentAliases": [
+        ],
+        "Tags": [
+        ]
+      },
+      "sys": {
+        "type": "Role",
+        "id": "7e58uB1BpD1na3XoOem2i5",
+        "version": 0,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "createdAt": "2023-10-02T15:47:34Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedAt": "2023-10-02T15:47:34Z"
+      }
+    },
+    {
+      "name": "Editor",
+      "description": "Allows editing, publishing and archiving of content",
+      "policies": [
+        {
+          "effect": "allow",
+          "actions": "all",
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": "all",
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "permissions": {
+        "ContentModel": [
+          "read"
+        ],
+        "Settings": [
+        ],
+        "ContentDelivery": [
+        ],
+        "Environments": [
+        ],
+        "EnvironmentAliases": [
+        ],
+        "Tags": [
+        ]
+      },
+      "sys": {
+        "type": "Role",
+        "id": "7e65KqpwUp2V4iMh1cVgDf",
+        "version": 0,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "createdAt": "2023-10-02T15:47:34Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedAt": "2023-10-02T15:47:34Z"
+      }
+    },
+    {
+      "name": "Freelancer",
+      "description": "Allows only editing of content they created themselves",
+      "policies": [
+        {
+          "effect": "allow",
+          "actions": [
+            "create"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "create"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              },
+              {
+                "paths": [
+                  {
+                    "doc": "fields.%.%"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "delete"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              },
+              {
+                "paths": [
+                  {
+                    "doc": "fields.%.%"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "delete"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              },
+              {
+                "equals": [
+                  {
+                    "doc": "sys.createdBy.sys.id"
+                  },
+                  "User.current()"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "permissions": {
+        "ContentModel": [
+          "read"
+        ],
+        "Settings": [
+        ],
+        "ContentDelivery": [
+        ],
+        "Environments": [
+        ],
+        "EnvironmentAliases": [
+        ],
+        "Tags": [
+        ]
+      },
+      "sys": {
+        "type": "Role",
+        "id": "7e6QU8mMjIcvfFzDn876FH",
+        "version": 0,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "createdAt": "2023-10-02T15:47:34Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedAt": "2023-10-02T15:47:34Z"
+      }
+    },
+    {
+      "name": "Translator",
+      "description": "Allows editing of localized fields in the specified language",
+      "policies": [
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "read"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Entry"
+                ]
+              },
+              {
+                "paths": [
+                  {
+                    "doc": "fields.%.%"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "effect": "allow",
+          "actions": [
+            "update"
+          ],
+          "constraint": {
+            "and": [
+              {
+                "equals": [
+                  {
+                    "doc": "sys.type"
+                  },
+                  "Asset"
+                ]
+              },
+              {
+                "paths": [
+                  {
+                    "doc": "fields.%.%"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "permissions": {
+        "ContentModel": [
+          "read"
+        ],
+        "Settings": [
+        ],
+        "ContentDelivery": [
+        ],
+        "Environments": [
+        ],
+        "EnvironmentAliases": [
+        ],
+        "Tags": [
+        ]
+      },
+      "sys": {
+        "type": "Role",
+        "id": "7e7V7qaoZfFIMiNUsJcW25",
+        "version": 0,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1yy9zkhd77sl"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "createdAt": "2023-10-02T15:47:34Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "08LcM38OAVfUmJY7a18Nr9"
+          }
+        },
+        "updatedAt": "2023-10-02T15:47:34Z"
+      }
+    }
+  ]
+}

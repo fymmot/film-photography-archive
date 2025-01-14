@@ -1,0 +1,44 @@
+---
+import Photo from "./Photo.astro";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  feature: any;
+  priority?: boolean;
+  sizes?: string;
+}
+
+const t = useTranslations();
+const {
+  feature,
+  priority = false,
+  sizes = "(min-width: 640px) 80vw, (min-width: 1200px) 80vw, 100vw",
+}: Props = Astro.props;
+---
+
+<li class="feature-card group relative overflow-hidden">
+  <a
+    href={`/highlights/${feature.slug}`}
+    data-astro-prefetch
+    class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-black/50 p-4 text-white"
+    aria-label={t("component.highlightCard.viewHighlight", {
+      title: feature.data.title,
+    })}
+  >
+    <p class="text-2xl font-semibold">{feature.data.title}</p>
+    {
+      feature.data.subtitle ? (
+        <p class="text-base opacity-80">{feature.data.subtitle}</p>
+      ) : null
+    }
+  </a>
+  <Photo
+    alt={t("component.highlightCard.coverImage", { title: feature.data.title })}
+    sizes={sizes}
+    enableLightbox={false}
+    src={feature.heroImage || feature.images?.[0]?.image}
+    priority={priority}
+    class="aspect-square object-cover transition-all duration-300 group-hover:scale-[1.02] lg:aspect-video"
+  />
+</li>

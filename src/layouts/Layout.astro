@@ -1,0 +1,168 @@
+---
+import Header from "../components/Header.astro";
+import "../styles/global.css";
+import "@fontsource/courier-prime";
+import courierPrimeWoff2 from "@fontsource/courier-prime/files/courier-prime-latin-400-normal.woff2?url";
+import globalConfig from "../../global.config.yml";
+import Footer from "../components/Footer.astro";
+
+const {
+  title,
+  h1,
+  h1Subtitle,
+  showSearch = false,
+  showInfoButton = false,
+} = Astro.props;
+const { pathname } = Astro.url;
+const isStartPage = pathname === "/";
+const isRollsPage = pathname === "/rolls" || pathname === "/rolls/";
+const isFeaturesPage = pathname === "/features" || pathname === "/features/";
+const isRollPage = pathname.includes("/rolls/") && !isRollsPage;
+const isFeaturePage = pathname.includes("/features/") && !isFeaturesPage;
+const backTarget = () => {
+  if (isStartPage) return null;
+  if (isRollsPage) return "start";
+  if (isRollPage) return "rolls";
+  if (isFeaturePage) return "start";
+  return "start";
+};
+const { theme_switch, default_theme, default_grid, default_lang } =
+  globalConfig;
+---
+
+<html
+  lang={default_lang}
+  data-theme-switch={theme_switch}
+  data-default-theme={default_theme}
+  data-default-grid={default_grid}
+  class={`${default_theme === "auto" ? "" : default_theme} ${default_grid === "compact" ? "compact-grid" : ""}`}
+  style={default_theme === "auto"
+    ? undefined
+    : `color-scheme: ${default_theme}`}
+>
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>
+      const THEME_STORAGE_KEY = "theme";
+      const GRID_STORAGE_KEY = "grid";
+      const htmlElement = document.documentElement;
+      const defaultTheme = htmlElement.dataset.defaultTheme;
+      const defaultGrid = htmlElement.dataset.defaultGrid;
+
+      function setTheme(theme) {
+        if (theme === "dark") {
+          htmlElement.classList.add("dark");
+          htmlElement.style.colorScheme = "dark";
+        } else {
+          htmlElement.classList.remove("dark");
+          htmlElement.style.colorScheme = "light";
+        }
+      }
+
+      function setGrid(grid) {
+        if (grid === "compact") {
+          htmlElement.classList.add("compact-grid");
+        } else {
+          htmlElement.classList.remove("compact-grid");
+        }
+      }
+
+      if (typeof localStorage !== "undefined") {
+        // Handle theme
+        const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        if (storedTheme !== null) {
+          setTheme(storedTheme);
+        } else if (defaultTheme === "auto") {
+          const systemPrefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          setTheme(systemPrefersDark ? "dark" : "light");
+        } else {
+          setTheme(defaultTheme);
+        }
+
+        // Handle grid
+        const storedGrid = localStorage.getItem(GRID_STORAGE_KEY);
+        if (storedGrid !== null) {
+          setGrid(storedGrid);
+        } else {
+          setGrid(defaultGrid);
+        }
+      }
+    </script>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Probably futile, but let's try to forbid AI training on your photos -->
+    <meta name="robots" content="noai, noimageai" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={courierPrimeWoff2}
+      crossorigin="anonymous"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="flex flex-col">
+    {
+      backTarget() && (
+        <Header
+          backTarget={backTarget()}
+          h1={h1}
+          h1Subtitle={h1Subtitle}
+          useBrowserBack={false}
+          showSearch={showSearch}
+          showInfoButton={showInfoButton}
+          showCastButton={false}
+        />
+      )
+    }
+    <main class="grow pt-4">
+      <slot />
+    </main>
+    <Footer />
+    <!-- <script
+      is:inline
+      src="https://www.googletagmanager.com/gtag/js?id=G-ZVSV1PEPK4"></script>
+    <script>
+      declare global {
+        interface Window {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          dataLayer: Record<string, any>[];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          gtag: (...args: any[]) => void;
+        }
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag() {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag("js", new Date());
+        window.gtag("consent", "default", {
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+          analytics_storage: "granted",
+        });
+        window.gtag("config", "G-ZVSV1PEPK4");
+      });
+    </script> -->
+    <script>
+      import { initAuth } from "../lib/auth";
+      // Initialize auth after DOM content is loaded
+      document.addEventListener("DOMContentLoaded", () => {
+        initAuth();
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  @view-transition {
+    navigation: auto;
+  }
+</style>

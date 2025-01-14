@@ -1,0 +1,164 @@
+---
+import globalConfig from "../../global.config.yml";
+import FilmstripDark from "../assets/images/filmstrip-dark.svg";
+import FilmstripLight from "../assets/images/filmstrip-light.svg";
+import { getEntry } from "astro:content";
+import Profile from "../assets/images/profile-square.jpg";
+import Photo from "../components/Photo.astro";
+import DarkModeSwitcher from "../components/DarkModeSwitcher.astro";
+import FullScreenSwitcher from "../components/FullScreenSwitcher.astro";
+import GridSwitcher from "../components/GridSwitcher.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations();
+
+const footer = await getEntry("pages", "footer");
+const { Content } = await footer.render();
+const copyright = await getEntry("pages", "copyright");
+const { Content: CopyrightContent } = await copyright.render();
+const { photoAlt } = footer.data;
+const { instagram, flickr, email, theme_switch, facebook, name } = globalConfig;
+---
+
+<footer class="">
+  <div
+    style={`background-image: url(${FilmstripLight.src}); background-repeat: repeat-x; background-size: contain;`}
+    class="mt-8 block h-28 w-full dark:hidden"
+  >
+  </div>
+  <div
+    style={`background-image: url(${FilmstripDark.src}); background-repeat: repeat-x; background-size: contain;`}
+    class="mt-8 hidden h-28 w-full dark:block"
+  >
+  </div>
+  <section
+    class="z-10 -mt-20 flex flex-col items-center justify-center gap-8 bg-neutral-400 py-16 dark:bg-[#222] sm:flex-row"
+  >
+    <div class="z-10 flex flex-col items-center justify-center gap-4">
+      <Photo
+        src={Profile}
+        sizes="256px"
+        enableLightbox
+        alt={photoAlt}
+        class="mx-auto size-64 min-w-64 rounded-full"
+      />
+    </div>
+
+    <div class="z-10 max-w-md space-y-4 px-4">
+      <h2 class="not-prose sr-only text-center text-xl sm:text-left">
+        {t("component.footer.heading")}
+      </h2>
+      <div
+        class="prose prose-sm prose-neutral text-black opacity-80 dark:prose-invert dark:text-white"
+      >
+        <Content />
+        <ul class="flex list-none flex-row flex-wrap items-center gap-8 p-0">
+          {
+            instagram && (
+              <li class="p-0">
+                <a
+                  href={`https://www.instagram.com/${instagram}`}
+                  target="_blank"
+                  class="underline-offset-2 opacity-80 hover:underline hover:opacity-100 focus-visible:opacity-100"
+                  aria-label={t("component.footer.instagram", {
+                    username: instagram,
+                  })}
+                >
+                  Instagram
+                </a>
+              </li>
+            )
+          }
+          {
+            flickr && (
+              <li class="p-0">
+                <a
+                  href={`https://www.flickr.com/photos/${flickr}`}
+                  target="_blank"
+                  class="underline-offset-2 opacity-80 hover:underline hover:opacity-100 focus-visible:opacity-100"
+                  aria-label={t("component.footer.flickr", {
+                    username: flickr,
+                  })}
+                >
+                  Flickr
+                </a>
+              </li>
+            )
+          }
+          {
+            facebook && (
+              <li class="p-0">
+                <a
+                  href={`https://www.facebook.com/${facebook}`}
+                  target="_blank"
+                  class="underline-offset-2 opacity-80 hover:underline hover:opacity-100 focus-visible:opacity-100"
+                  aria-label={t("component.footer.facebook", {
+                    username: name,
+                  })}
+                >
+                  Facebook
+                </a>
+              </li>
+            )
+          }
+          {
+            email && (
+              <li class="p-0">
+                <a
+                  href={`mailto:${email}`}
+                  class="underline-offset-2 opacity-80 hover:underline hover:opacity-100 focus-visible:opacity-100"
+                  aria-label={t("component.footer.email")}
+                >
+                  Email
+                </a>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+  <div class="mt-[-80px]">
+    <div
+      style={`background-image: url(${FilmstripLight.src}); background-repeat: repeat-x; background-size: contain; transform: rotate(180deg);`}
+      class="block h-28 w-full dark:hidden"
+    >
+    </div>
+    <div
+      style={`background-image: url(${FilmstripDark.src}); background-repeat: repeat-x; background-size: contain; transform: rotate(180deg);`}
+      class="hidden h-28 w-full dark:block"
+    >
+    </div>
+  </div>
+  <section
+    class="space-y-8 bg-white py-4 dark:bg-black"
+    aria-labelledby="settings"
+  >
+    <h2 id="settings" class="sr-only">{t("component.footer.settings")}</h2>
+    {
+      theme_switch === "on" && (
+        <div>
+          <div class="flex flex-row flex-wrap items-center justify-center gap-4 sm:gap-6">
+            <div class="flex justify-center">
+              <DarkModeSwitcher inverted />
+            </div>
+            <div class="flex justify-center">
+              <FullScreenSwitcher inverted />
+            </div>
+            <div class="flex justify-center">
+              <GridSwitcher inverted />
+            </div>
+          </div>
+        </div>
+      )
+    }
+    <h2 class="not-prose sr-only text-center text-xl sm:text-left">
+      {t("component.footer.copyright")}
+    </h2>
+    <div
+      class="copyright container mx-auto text-center text-sm text-black/60 dark:text-white/60"
+    >
+      <CopyrightContent />
+    </div>
+  </section>
+</footer>
