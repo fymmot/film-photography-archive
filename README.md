@@ -2,6 +2,8 @@
 
 An open source film photography portfolio/blog/archive for publishing your film rolls.
 
+> 👉 New to GitHub? Check out the [simplified setup guide](SETUP_SIMPLE.md) to get started without any coding.
+
 ## Screenshots
 Landing page
 ![Landing page](src/assets/readme/landing.webp)
@@ -81,9 +83,7 @@ To add a photo from a roll, just add the name of the feature to the photo in the
 ```
 
 ### How can I translate the website to my language?
-All translations are managed in the `content` folder. You need to translate each page manually.
-
-You will also need to change the `lang` attribute in the `<html>` tag in the `src/components/layout.astro` file to your language.
+Translations for the UI are managed in the `i18n` folder. Currently only English is supported, but you can easily add your own language.
 
 ### How do I use the website as a PWA?
 The website is PWA compatible by default and installable to your phone's home screen. 
