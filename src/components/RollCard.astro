@@ -53,7 +53,6 @@ const featuredImage = cardImages.find((img) => img.feature) || cardImages[0];
 
 const squareImage = await getImage({
   src: featuredImage.image,
-  format: "avif",
   fit: "cover",
   width: 720,
   height: 720,
