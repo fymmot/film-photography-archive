@@ -44,23 +44,9 @@ You'll need to edit a few files directly on GitHub:
    ```
 4. Click "Commit changes" at the bottom
 
-Note: The camera, film, and lens lists in this file are only used by the setup script for local development. We'll configure these directly in the CMS config instead.
-
-### Edit astro.config.mjs
-1. Find and open `astro.config.mjs`
-2. Click the pencil icon
-3. Update the `site` field with your Netlify URL (or custom domain if you have one):
-   ```js
-   export default defineConfig({
-     output: "static",
-     site: "https://your-site-name.netlify.app/", // Change this to your actual site URL
-     // ... rest of the config
-   });
-   ```
-4. Click "Commit changes"
 
 ### Edit public/admin/config.yml
-The CMS config is used to configure the admin interface.
+This config is used to configure the admin interface. The options you add here will populate the dropdowns in admin interface when adding new content.
 
 1. Find and open `public/admin/config.yml`
 2. Click the pencil icon
@@ -101,10 +87,8 @@ The CMS config is used to configure the admin interface.
    ```
 7. Click "Commit changes"
 
-Note: These equipment lists in the CMS config are what will actually be used by the admin interface.
-
 ## 3. Deploy to Netlify
-Netlify is used to host your site. Every time you add new content, the site will automatically be redeployed which can take a few minutes.
+Netlify is used to host your site. Every time you add new content, Netlify will automatically redeploy the site which can take a few minutes to complete.
 
 1. Go to [Netlify](https://www.netlify.com/)
 2. Sign up/Login (you can use your GitHub account)
@@ -160,9 +144,11 @@ Netlify Identity is used to manage users and permissions for the admin interface
    - Upload some photos
 4. Click "Publish". It will take a few minutes for the site to be redeployed.
 
+**Note:** Limit the size of each photo to 10MB or less.
+
 ## 7. Customize your site content
 
-You can customize the texts shown on your site by editing the markdown files in the `src/content` folder:
+You can customize the texts shown on your site by editing the markdown files in the `src/content` folder on GitHub:
 
 ### Landing page
 Edit `src/content/pages/landing-page.md` to change your site's main page:
@@ -182,9 +168,9 @@ Add a short description of yourself here.
 ```
 
 ### Copyright notice
-Edit `src/content/pages/copyright.md` to update your copyright information:
+Edit `src/content/pages/copyright.md` to update your copyright information.
 ```markdown
-Photos © Your name. All rights reserved.
+Photos © Your name. All rights reserved. Built with [fymmot/film-photography-archive](https://github.com/fymmot/film-photography-archive).
 ```
 
 ### Features
@@ -196,7 +182,7 @@ images: []
 ---
 ```
 
-You will also need to add the feature to the `features` collection in the CMS config (public/admin/config.yml)
+You will also need to add the feature to the `features` collection in the CMS config (public/admin/config.yml) in order to be able to add it to individual images.
 
 ## Next steps
 
