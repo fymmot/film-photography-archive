@@ -136,8 +136,24 @@ Deploying to Netlify is optional, but it is an easy way to host the website and 
 1. Create a new site on Netlify and connect it to the repository. It should automatically detect that the build command is `yarn build` and the publish directory is `dist`.
 2. Enable the "Identity" service and enable "Git Gateway" for access management.
 3. Invite your user to the Identity so that you will be able to log in to the CMS.
-4. Click on "Deploy site"
-5. The site should now be live! The admin UI should be available at `https://<your-site-name>.netlify.app/admin`.
+4. In **Site configuration → Environment variables**, set **`GITHUB_REPO_OWNER`** and **`GITHUB_REPO_NAME`** (your GitHub username and this repo name). This is required for the Decap CMS image preview to work—see the subsection below for details and for private forks.
+5. Click on "Deploy site"
+6. The site should now be live! The admin UI should be available at `https://<your-site-name>.netlify.app/admin`.
+
+### Decap CMS: images not showing in the admin preview?
+
+The CMS expects images at `/src/assets/images/photos/`, but the built site doesn’t include that path. A Netlify function proxies those requests from your GitHub repo.
+
+**Set these in Netlify (Site configuration → Environment variables):**
+
+- **`GITHUB_REPO_OWNER`** – your GitHub username (or org)
+- **`GITHUB_REPO_NAME`** – this repo’s name (e.g. `film-photography-archive`)
+
+If your fork is **private**, also set **`GITHUB_TOKEN`** to a Personal Access Token with `repo` (or `contents: read`) so the function can fetch images.
+
+Optional: **`GITHUB_BRANCH`** – branch to load images from (default: `main`).
+
+Then trigger a new deploy so the function picks up the variables. After that, image thumbnails and the preview pane in the CMS should work.
 
 ### My Netlify build is timing out, now what?
 

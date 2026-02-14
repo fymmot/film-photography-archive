@@ -2,5 +2,14 @@
   command = "yarn build"
   publish = "dist"
 
+# DecapCMS admin loads images from /src/assets/images/photos/* but the built
+# site doesn't include that path. Proxy via function using GITHUB_REPO_OWNER and
+# GITHUB_REPO_NAME (and optional GITHUB_TOKEN for private forks).
+[[redirects]]
+  from = "/src/assets/images/photos/*"
+  to = "/.netlify/functions/serve-cms-image/:splat"
+  status = 200
+  force = true
+
 [functions]
   node_bundler = "esbuild"
