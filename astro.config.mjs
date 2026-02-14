@@ -10,7 +10,7 @@ import icon from "astro-icon";
 
 import sitemap from "@astrojs/sitemap";
 
-import removeOriginalImages from "./src/lib/integration";
+// import removeOriginalImages from "./src/lib/integration";
 
 import image from "@jcayzac/astro-image-service-ng";
 
@@ -33,7 +33,7 @@ export default defineConfig({
     image({
       defaultFormat: "webp",
     }),
-    removeOriginalImages(),
+    // removeOriginalImages(),
     webmanifest({
       /**
        * required
