@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "astro": "astro",
-    "build": "astro check && astro build",
+    "build": "npm run build:admin && astro check && astro build",
+    "build:admin": "cd admin-app && npm run build",
     "typecheck": "tsc --noEmit",
     "dev": "astro dev",
     "preview": "astro preview",

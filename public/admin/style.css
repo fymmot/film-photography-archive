@@ -1,3 +1,91 @@
+/* General preview */
 img[role="presentation"] {
   max-width: 80%;
+}
+
+/* Roll preview: keep images within viewport, no scroll */
+.cms-preview-roll .cms-preview-img {
+  display: block;
+  max-width: 100%;
+  max-height: min(60vh, 480px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.cms-preview-roll .cms-preview-figure {
+  margin: 0.5rem 0;
+}
+
+.cms-preview-roll .cms-preview-figure figcaption {
+  margin-top: 0.25rem;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.cms-preview-roll .cms-preview-subheading {
+  margin: 0.25rem 0 0 0;
+  font-style: italic;
+  font-size: 1rem;
+}
+
+/* Semantic details list: unstyled but readable */
+.cms-preview-roll .cms-preview-details dl {
+  margin: 0.5rem 0;
+}
+
+.cms-preview-roll .cms-preview-details dt {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.cms-preview-roll .cms-preview-details dt:first-of-type {
+  margin-top: 0;
+}
+
+.cms-preview-roll .cms-preview-details dd {
+  margin: 0.15rem 0 0 0;
+}
+
+.cms-preview-roll .cms-preview-details h2,
+.cms-preview-roll .cms-preview-comments h2,
+.cms-preview-roll .cms-preview-images h2 {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.cms-preview-roll .cms-preview-details h2:first-child {
+  margin-top: 0;
+}
+
+.cms-preview-roll .cms-preview-images-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Feature preview: same image constraints */
+.cms-preview-feature .cms-preview-img {
+  display: block;
+  max-width: 100%;
+  max-height: min(60vh, 480px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.cms-preview-feature .cms-preview-figure {
+  margin: 0.5rem 0;
+}
+
+.cms-preview-feature .cms-preview-figure figcaption {
+  margin-top: 0.25rem;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.cms-preview-feature .cms-preview-images-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }

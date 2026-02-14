@@ -50,6 +50,10 @@ export const handler: Handler = async (event) => {
   const ext = filePath.slice(filePath.lastIndexOf(".")).toLowerCase();
   const contentType = MIME_BY_EXT[ext] ?? "application/octet-stream";
 
+  // Optional ref (branch/tag/SHA) for draft content; default is main
+  const ref =
+    event.queryStringParameters?.ref ?? event.queryStringParameters?.branch ?? MAIN_BRANCH;
+
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.raw",
   };
@@ -59,17 +63,29 @@ export const handler: Handler = async (event) => {
 
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${apiPath}?ref=${MAIN_BRANCH}`,
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${apiPath}?ref=${encodeURIComponent(ref)}`,
       { headers }
     );
 
     if (!res.ok) {
+      const text = await res.text();
+      console.error("GitHub API error", res.status, apiPath, text.slice(0, 200));
       if (res.status === 404) {
         return { statusCode: 404, body: "Image not found" };
       }
-      const text = await res.text();
-      console.error("GitHub API error", res.status, text);
-      return { statusCode: 502, body: "Failed to fetch image" };
+      if (res.status === 401) {
+        return { statusCode: 502, body: "GitHub auth failed (check GITHUB_TOKEN for private repos)" };
+      }
+      if (res.status === 403) {
+        const isRateLimit = text.includes("rate limit");
+        return {
+          statusCode: 502,
+          body: isRateLimit
+            ? "GitHub rate limit exceeded. Set GITHUB_TOKEN in .env (and Netlify) for a higher limit."
+            : "GitHub forbidden (token scope or repo access)",
+        };
+      }
+      return { statusCode: 502, body: `GitHub API ${res.status}` };
     }
 
     const body = await res.arrayBuffer();
